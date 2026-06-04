@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Safe Tag - Localisation GPS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e3a8a);
+      color: white;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      padding: 30px 15px;
+      background: rgba(0, 0, 0, 0.25);
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 38px;
+      letter-spacing: 1px;
+    }
+
+    header p {
+      margin-top: 10px;
+      opacity: 0.85;
+    }
+
+    .container {
+      width: 95%;
+      max-width: 1000px;
+      margin: 25px auto;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+      border-radius: 22px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .info {
+      background: rgba(0,0,0,0.25);
+      padding: 15px;
+      border-radius: 16px;
+    }
+
+    .label {
+      font-size: 14px;
+      opacity: 0.75;
+      margin-bottom: 6px;
+    }
+
+    .value {
+      font-size: 22px;
+      font-weight: bold;
+      color: #facc15;
+      word-break: break-word;
+    }
+
+    .status {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-weight: bold;
+      background: #f97316;
+      color: white;
+    }
+
+    .status.ok {
+      background: #22c55e;
+      color: #052e16;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      justify-content: center;
+    }
+
+    button, a.button {
+      border: none;
+      text-decoration: none;
+      background: #facc15;
+      color: #111827;
+      padding: 13px 18px;
+      border-radius: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover, a.button:hover {
+      transform: scale(1.04);
+      background: #fde047;
+    }
+
+    iframe {
+      width: 100%;
+      height: 480px;
+      border: none;
+      border-radius: 22px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      background: #111;
+    }
+
+    .footer {
+      text-align: center;
+      opacity: 0.75;
+      font-size: 14px;
+      padding-bottom: 30px;
+    }
+
+    @media (max-width: 700px) {
+      header h1 {
+        font-size: 30px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      iframe {
+        height: 380px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>Safe Tag</h1>
+    <p>Localisation GPS en temps réel</p>
+  </header>
+
+  <div class="container">
+
+    <div class="card">
+      <h2>Dernière position reçue</h2>
+
+      <div class="grid">
+        <div class="info">
+          <div class="label">Latitude</div>
+          <div class="value" id="latitude">...</div>
+        </div>
+
+        <div class="info">
+          <div class="label">Longitude</div>
+          <div class="value" id="longitude">...</div>
+        </div>
+
+        <div class="info">
+          <div class="label">Satellites</div>
+          <div class="value" id="satellites">...</div>
+        </div>
+
+        <div class="info">
+          <div class="label">Précision HDOP</div>
+          <div class="value" id="hdop">...</div>
+        </div>
+      </div>
+
+      <div id="status" class="status">En attente des données GPS...</div>
+
+      <p id="maj">Dernière mise à jour sur le site : ...</p>
+
+      <div class="buttons">
+        <a id="mapsButton" class="button" href="#" target="_blank">
+          Ouvrir dans Google Maps
+        </a>
+
+        <button onclick="chargerPosition()">
+          Actualiser maintenant
+        </button>
+      </div>
+    </div>
+
+    <iframe id="map" src=""></iframe>
+
+  </div>
+
+  <div class="footer">
+    Safe Tag - Projet collier GPS connecté
+  </div>
+
+  <script>
+    const firebaseURL = "https://colliergps-default-rtdb.asia-southeast1.firebasedatabase.app/safeTag/position.json";
+
+    async function chargerPosition() {
+      try {
+        const response = await fetch(firebaseURL);
+        const data = await response.json();
+
+        if (!data) {
+          document.getElementById("status").textContent = "Aucune position reçue pour l’instant";
+          document.getElementById("status").classList.remove("ok");
+          return;
+        }
+
+        const latitude = data.latitude;
+        const longitude = data.longitude;
+        const satellites = data.satellites;
+        const hdop = data.hdop;
+
+        document.getElementById("latitude").textContent = latitude;
+        document.getElementById("longitude").textContent = longitude;
+        document.getElementById("satellites").textContent = satellites;
+        document.getElementById("hdop").textContent = hdop;
+
+        document.getElementById("status").textContent = "GPS connecté";
+        document.getElementById("status").classList.add("ok");
+
+        document.getElementById("maj").textContent =
+          "Dernière mise à jour sur le site : " + new Date().toLocaleString();
+
+        const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+        document.getElementById("mapsButton").href = mapsUrl;
+
+        const mapEmbed = `https://maps.google.com/maps?q=${latitude},${longitude}&z=19&output=embed`;
+        document.getElementById("map").src = mapEmbed;
+
+      } catch (error) {
+        console.log(error);
+        document.getElementById("status").textContent = "Erreur de connexion à Firebase";
+        document.getElementById("status").classList.remove("ok");
+      }
+    }
+
+    chargerPosition();
+
+    setInterval(chargerPosition, 3000);
+  </script>
+
+</body>
+</html>
