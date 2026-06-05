@@ -188,15 +188,18 @@
       <p id="maj">Dernière mise à jour sur le site : ...</p>
 
       <div class="buttons">
-        <a id="mapsButton" class="button" href="#" target="_blank">
-          Ouvrir dans Google Maps
-        </a>
+  <a id="mapsButton" class="button" href="#" target="_blank">
+    Ouvrir dans Google Maps
+  </a>
 
-        <button onclick="chargerPosition()">
-          Actualiser maintenant
-        </button>
-      </div>
-    </div>
+  <a id="routeButton" class="button" href="#" target="_blank">
+    Itinéraire jusqu’au GPS
+  </a>
+
+  <button onclick="chargerPosition()">
+    Actualiser maintenant
+  </button>
+</div>
 
     <iframe id="map" src=""></iframe>
 
@@ -238,6 +241,9 @@
 
         const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
         document.getElementById("mapsButton").href = mapsUrl;
+
+        const routeUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+document.getElementById("routeButton").href = routeUrl;
 
         const mapEmbed = `https://maps.google.com/maps?q=${latitude},${longitude}&z=19&output=embed`;
         document.getElementById("map").src = mapEmbed;
