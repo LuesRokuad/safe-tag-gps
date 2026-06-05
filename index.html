@@ -1,9 +1,11 @@
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <title>Safe Tag — GPS Tracker</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
@@ -22,9 +24,15 @@
       --subtle: #1e293b;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       font-family: 'Syne', sans-serif;
@@ -46,20 +54,24 @@
     .bg-canvas::before {
       content: '';
       position: absolute;
-      width: 900px; height: 900px;
+      width: 900px;
+      height: 900px;
       border-radius: 50%;
       background: radial-gradient(circle, rgba(250,204,21,0.07) 0%, transparent 70%);
-      top: -300px; left: -200px;
+      top: -300px;
+      left: -200px;
       animation: drift1 18s ease-in-out infinite alternate;
     }
 
     .bg-canvas::after {
       content: '';
       position: absolute;
-      width: 700px; height: 700px;
+      width: 700px;
+      height: 700px;
       border-radius: 50%;
       background: radial-gradient(circle, rgba(59,130,246,0.09) 0%, transparent 70%);
-      bottom: -200px; right: -150px;
+      bottom: -200px;
+      right: -150px;
       animation: drift2 22s ease-in-out infinite alternate;
     }
 
@@ -73,8 +85,15 @@
       mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
     }
 
-    @keyframes drift1 { from { transform: translate(0,0) scale(1); } to { transform: translate(80px, 60px) scale(1.15); } }
-    @keyframes drift2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-60px, -40px) scale(1.1); } }
+    @keyframes drift1 {
+      from { transform: translate(0,0) scale(1); }
+      to { transform: translate(80px, 60px) scale(1.15); }
+    }
+
+    @keyframes drift2 {
+      from { transform: translate(0,0) scale(1); }
+      to { transform: translate(-60px, -40px) scale(1.1); }
+    }
 
     /* ─── LAYOUT ──────────────────────────────────────── */
     .app {
@@ -101,10 +120,13 @@
     }
 
     .logo {
-      width: 52px; height: 52px;
+      width: 52px;
+      height: 52px;
       border-radius: 18px;
       background: linear-gradient(135deg, var(--gold), var(--orange));
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-weight: 800;
       font-size: 20px;
       color: #111;
@@ -174,22 +196,36 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 999px;
+      white-space: nowrap;
     }
 
     /* ─── PULSE DOT ───────────────────────────────────── */
     .dot {
-      width: 8px; height: 8px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       flex-shrink: 0;
     }
-    .dot.green { background: #22c55e; animation: glow-green 1.5s ease-in-out infinite; }
-    .dot.red   { background: #ef4444; }
-    .dot.yellow { background: #facc15; animation: glow-yellow 1.5s ease-in-out infinite; }
+
+    .dot.green {
+      background: #22c55e;
+      animation: glow-green 1.5s ease-in-out infinite;
+    }
+
+    .dot.red {
+      background: #ef4444;
+    }
+
+    .dot.yellow {
+      background: #facc15;
+      animation: glow-yellow 1.5s ease-in-out infinite;
+    }
 
     @keyframes glow-green {
       0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); }
       50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
     }
+
     @keyframes glow-yellow {
       0%, 100% { box-shadow: 0 0 0 0 rgba(250,204,21,0.7); }
       50% { box-shadow: 0 0 0 6px rgba(250,204,21,0); }
@@ -272,7 +308,8 @@
     }
 
     .quality-bar span {
-      width: 5px; height: 18px;
+      width: 5px;
+      height: 18px;
       border-radius: 3px;
       background: var(--border);
       transition: background 0.4s ease, height 0.4s ease;
@@ -295,12 +332,16 @@
       transition: border-color 0.3s ease, transform 0.2s ease;
     }
 
-    .stat:hover { transform: translateY(-2px); }
+    .stat:hover {
+      transform: translateY(-2px);
+    }
 
     .stat::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0;
+      top: 0;
+      left: 0;
+      right: 0;
       height: 2px;
       border-radius: 2px 2px 0 0;
       opacity: 0.7;
@@ -332,6 +373,7 @@
       font-family: 'JetBrains Mono', monospace;
       letter-spacing: -0.5px;
       transition: color 0.3s ease;
+      word-break: break-word;
     }
 
     .stat-sub {
@@ -352,6 +394,7 @@
     .btn {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
       padding: 13px 20px;
       border-radius: 14px;
@@ -365,8 +408,14 @@
       white-space: nowrap;
     }
 
-    .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
-    .btn:active { transform: translateY(0); }
+    .btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
 
     .btn-primary {
       background: linear-gradient(135deg, var(--gold), var(--orange));
@@ -380,7 +429,9 @@
       border: 1px solid var(--border);
     }
 
-    .btn-ghost:hover { background: rgba(255,255,255,0.08); }
+    .btn-ghost:hover {
+      background: rgba(255,255,255,0.08);
+    }
 
     .btn-danger {
       background: rgba(239,68,68,0.12);
@@ -388,7 +439,9 @@
       border: 1px solid rgba(239,68,68,0.28);
     }
 
-    .btn-danger:hover { background: rgba(239,68,68,0.2); }
+    .btn-danger:hover {
+      background: rgba(239,68,68,0.2);
+    }
 
     .btn-disabled {
       opacity: 0.4;
@@ -447,8 +500,10 @@
     }
 
     #map {
-      width: 100%; height: 480px;
-      border: none; display: block;
+      width: 100%;
+      height: 480px;
+      border: none;
+      display: block;
       background: #111827;
     }
 
@@ -486,14 +541,24 @@
       overflow-y: auto;
     }
 
-    .history-list::-webkit-scrollbar { width: 4px; }
-    .history-list::-webkit-scrollbar-track { background: transparent; }
-    .history-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .history-list::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .history-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .history-list::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
+    }
 
     .history-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
       padding: 10px 12px;
       background: rgba(15,23,42,0.6);
       border: 1px solid var(--border);
@@ -508,8 +573,15 @@
       to { opacity: 1; transform: translateX(0); }
     }
 
-    .history-coords { color: var(--text); font-weight: 600; }
-    .history-time { color: var(--muted); }
+    .history-coords {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .history-time {
+      color: var(--muted);
+      white-space: nowrap;
+    }
 
     .history-empty {
       font-size: 13px;
@@ -571,16 +643,26 @@
       margin-top: 32px;
       font-family: 'JetBrains Mono', monospace;
       letter-spacing: 0.3px;
+      line-height: 1.6;
     }
 
-    .footer a { color: var(--muted); text-decoration: none; }
-    .footer a:hover { color: var(--gold); }
+    .footer a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      color: var(--gold);
+    }
 
     /* ─── TOAST ───────────────────────────────────────── */
     .toast-container {
       position: fixed;
-      bottom: 24px; right: 24px;
-      display: flex; flex-direction: column; gap: 8px;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
       z-index: 999;
     }
 
@@ -595,19 +677,34 @@
       cursor: pointer;
     }
 
-    .toast.success { background: rgba(34,197,94,0.12); color: #86efac; border-color: rgba(34,197,94,0.3); }
-    .toast.error   { background: rgba(239,68,68,0.12); color: #fca5a5; border-color: rgba(239,68,68,0.3); }
-    .toast.info    { background: rgba(59,130,246,0.12); color: #93c5fd; border-color: rgba(59,130,246,0.3); }
+    .toast.success {
+      background: rgba(34,197,94,0.12);
+      color: #86efac;
+      border-color: rgba(34,197,94,0.3);
+    }
+
+    .toast.error {
+      background: rgba(239,68,68,0.12);
+      color: #fca5a5;
+      border-color: rgba(239,68,68,0.3);
+    }
+
+    .toast.info {
+      background: rgba(59,130,246,0.12);
+      color: #93c5fd;
+      border-color: rgba(59,130,246,0.3);
+    }
 
     @keyframes toastIn {
       from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* ─── SKELETON ────────────────────────────────────── */
     .skeleton {
       display: inline-block;
-      width: 90px; height: 22px;
+      width: 90px;
+      height: 22px;
       border-radius: 6px;
       background: linear-gradient(90deg, var(--subtle) 25%, rgba(255,255,255,0.06) 50%, var(--subtle) 75%);
       background-size: 200% 100%;
@@ -616,48 +713,268 @@
     }
 
     @keyframes shimmer {
-      0%   { background-position: 200% 0; }
+      0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
     }
 
-    /* ─── RESPONSIVE ──────────────────────────────────── */
-    @media (max-width: 960px) {
-      .bottom-grid { grid-template-columns: 1fr; }
-      .side-panel { flex-direction: row; flex-wrap: wrap; }
-      .side-panel .panel-card { flex: 1; min-width: 260px; }
-      #map { height: 400px; }
+    /* ──────────────────────────────────────────────── */
+    /* RESPONSIVE PC / TABLETTE / TELEPHONE              */
+    /* ──────────────────────────────────────────────── */
+
+    @media (max-width: 1100px) {
+      .app {
+        max-width: 100%;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .side-panel {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      #map {
+        height: 440px;
+      }
     }
 
-    @media (max-width: 700px) {
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .hero-header { flex-direction: column; }
-      .quality-block { text-align: left; }
-      .quality-bar { justify-content: flex-start; }
+    @media (max-width: 850px) {
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .topbar-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .hero-header {
+        flex-direction: column;
+      }
+
+      .quality-block {
+        text-align: left;
+      }
+
+      .quality-bar {
+        justify-content: flex-start;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .side-panel {
+        grid-template-columns: 1fr;
+      }
+
+      #map {
+        height: 400px;
+      }
     }
 
-    @media (max-width: 500px) {
-      .app { padding: 16px 16px 40px; }
-      .topbar { flex-direction: column; align-items: flex-start; }
-      .topbar-right { justify-content: flex-start; }
-      .hero { padding: 22px 18px; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .btn { width: 100%; justify-content: center; }
-      .actions { flex-direction: column; }
-      .side-panel { flex-direction: column; }
-      #map { height: 320px; }
+    @media (max-width: 600px) {
+      .app {
+        padding: 14px 12px 34px;
+      }
+
+      .bg-grid {
+        background-size: 34px 34px;
+      }
+
+      .brand {
+        gap: 10px;
+      }
+
+      .logo {
+        width: 46px;
+        height: 46px;
+        border-radius: 15px;
+        font-size: 18px;
+      }
+
+      .brand-text h1 {
+        font-size: 24px;
+      }
+
+      .brand-text p {
+        font-size: 11px;
+      }
+
+      .topbar-right {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 9px;
+      }
+
+      .status-pill,
+      .refresh-counter {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .hero {
+        padding: 20px 16px;
+        border-radius: 22px;
+      }
+
+      .hero-header {
+        gap: 16px;
+        margin-bottom: 20px;
+        padding-bottom: 18px;
+      }
+
+      .hero-header h2 {
+        font-size: 25px;
+      }
+
+      .hero-header p {
+        font-size: 13px;
+      }
+
+      .quality-value {
+        font-size: 24px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .stat {
+        padding: 16px;
+        border-radius: 17px;
+      }
+
+      .stat-icon {
+        margin-bottom: 7px;
+      }
+
+      .stat-value {
+        font-size: 20px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 14px 16px;
+      }
+
+      .bottom-grid {
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .map-card,
+      .panel-card {
+        border-radius: 20px;
+      }
+
+      .map-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px 16px;
+      }
+
+      .map-zoom-badge {
+        display: none;
+      }
+
+      #map {
+        height: 340px;
+      }
+
+      .panel-card {
+        padding: 18px 16px;
+      }
+
+      .uptime-display {
+        font-size: 30px;
+      }
+
+      .uptime-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .history-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .history-time {
+        white-space: normal;
+      }
+
+      .toast-container {
+        left: 12px;
+        right: 12px;
+        bottom: 14px;
+      }
+
+      .toast {
+        width: 100%;
+        text-align: center;
+      }
+
+      .footer {
+        font-size: 11px;
+        margin-top: 24px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .app {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .hero {
+        padding: 18px 14px;
+      }
+
+      .brand-text h1 {
+        font-size: 22px;
+      }
+
+      .hero-header h2 {
+        font-size: 22px;
+      }
+
+      .stat-value {
+        font-size: 18px;
+      }
+
+      .uptime-row {
+        grid-template-columns: 1fr;
+      }
+
+      #map {
+        height: 300px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-<div class="bg-canvas"><div class="bg-grid"></div></div>
+<div class="bg-canvas">
+  <div class="bg-grid"></div>
+</div>
 
 <div class="toast-container" id="toastContainer"></div>
 
 <main class="app">
 
-  <!-- TOPBAR -->
   <section class="topbar">
     <div class="brand">
       <div class="logo">ST</div>
@@ -666,8 +983,12 @@
         <p>Wemos D1 · Firebase · GPS L76</p>
       </div>
     </div>
+
     <div class="topbar-right">
-      <div class="refresh-counter" id="refreshCounter">Prochain refresh dans <span id="countdown">3</span>s</div>
+      <div class="refresh-counter" id="refreshCounter">
+        Prochain refresh dans <span id="countdown">3</span>s
+      </div>
+
       <div class="status-pill loading" id="statusPill">
         <span class="dot yellow"></span>
         <span id="statusText">Connexion…</span>
@@ -675,13 +996,16 @@
     </div>
   </section>
 
-  <!-- HERO CARD -->
   <section class="hero">
     <div class="hero-header">
       <div>
         <h2>Position <span>en direct</span></h2>
-        <p>Dernière position transmise par le collier GPS via Firebase Realtime Database. Rafraîchissement automatique toutes les 3 secondes.</p>
+        <p>
+          Dernière position transmise par le collier GPS via Firebase Realtime Database.
+          Rafraîchissement automatique toutes les 3 secondes.
+        </p>
       </div>
+
       <div class="quality-block">
         <div class="quality-label">Qualité signal</div>
         <div class="quality-value" id="qualityText" style="color: var(--muted);">—</div>
@@ -691,7 +1015,6 @@
       </div>
     </div>
 
-    <!-- STATS -->
     <div class="stats-grid">
       <div class="stat lat">
         <span class="stat-icon">🧭</span>
@@ -699,18 +1022,21 @@
         <div class="stat-value" id="latitude"><span class="skeleton"></span></div>
         <div class="stat-sub" id="latDir">—</div>
       </div>
+
       <div class="stat lng">
         <span class="stat-icon">🌐</span>
         <div class="stat-label">Longitude</div>
         <div class="stat-value" id="longitude"><span class="skeleton"></span></div>
         <div class="stat-sub" id="lngDir">—</div>
       </div>
+
       <div class="stat sat">
         <span class="stat-icon">🛰</span>
         <div class="stat-label">Satellites</div>
         <div class="stat-value" id="satellites"><span class="skeleton"></span></div>
         <div class="stat-sub" id="satStatus">—</div>
       </div>
+
       <div class="stat hdop">
         <span class="stat-icon">📡</span>
         <div class="stat-label">Précision HDOP</div>
@@ -719,55 +1045,54 @@
       </div>
     </div>
 
-    <!-- ACTIONS -->
     <div class="actions">
       <a id="mapsBtn" class="btn btn-primary btn-disabled" href="#" target="_blank">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
         Google Maps
       </a>
+
       <a id="routeBtn" class="btn btn-ghost btn-disabled" href="#" target="_blank">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12h18m-6-6 6 6-6 6"/></svg>
         Itinéraire
       </a>
+
       <button class="btn btn-ghost" onclick="chargerPosition(true)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
         Actualiser
       </button>
+
       <a id="emergencyBtn" class="btn btn-danger btn-disabled" href="#" target="_blank">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         Retrouver maintenant
       </a>
     </div>
   </section>
 
-  <!-- BOTTOM GRID -->
   <div class="bottom-grid">
 
-    <!-- MAP -->
     <section class="map-card">
       <div class="map-header">
         <div>
           <h3>📍 Carte GPS live</h3>
           <p id="lastUpdate">En attente de données…</p>
         </div>
+
         <div class="map-zoom-badge">Zoom ×19</div>
       </div>
+
       <iframe id="map" src="" allowfullscreen loading="lazy"></iframe>
     </section>
 
-    <!-- SIDE PANEL -->
     <div class="side-panel">
 
-      <!-- UPTIME -->
       <div class="panel-card">
         <h4>Session</h4>
+
         <div class="uptime-display" id="uptimeDisplay">00:00</div>
         <div class="uptime-label">Durée de session</div>
+
         <div class="uptime-row">
           <div class="uptime-mini">
             <div class="val" id="fetchCount" style="color: var(--green)">0</div>
             <div class="lbl">Fetch réussis</div>
           </div>
+
           <div class="uptime-mini">
             <div class="val" id="errorCount" style="color: var(--red)">0</div>
             <div class="lbl">Erreurs</div>
@@ -775,9 +1100,9 @@
         </div>
       </div>
 
-      <!-- HISTORIQUE -->
       <div class="panel-card">
         <h4>Historique positions</h4>
+
         <div class="history-list" id="historyList">
           <div class="history-empty">Aucune position encore…</div>
         </div>
@@ -797,70 +1122,82 @@
   const FIREBASE_URL = "https://colliergps-default-rtdb.asia-southeast1.firebasedatabase.app/safeTag/position.json";
   const REFRESH_MS = 3000;
 
-  // ─── STATE ────────────────────────────────────────────
   let fetchCount = 0;
   let errorCount = 0;
   let sessionStart = Date.now();
   let positionHistory = [];
-  let lastLat = null, lastLng = null;
+  let lastLat = null;
+  let lastLng = null;
   let countdownVal = REFRESH_MS / 1000;
   let countdownInterval = null;
 
-  // ─── UPTIME ───────────────────────────────────────────
   setInterval(() => {
     const s = Math.floor((Date.now() - sessionStart) / 1000);
     const m = Math.floor(s / 60);
     const h = Math.floor(m / 60);
-    const ss = String(s % 60).padStart(2,'0');
-    const mm = String(m % 60).padStart(2,'0');
-    const hh = String(h).padStart(2,'0');
-    document.getElementById('uptimeDisplay').textContent = h > 0 ? `${hh}:${mm}:${ss}` : `${mm}:${ss}`;
+
+    const ss = String(s % 60).padStart(2, '0');
+    const mm = String(m % 60).padStart(2, '0');
+    const hh = String(h).padStart(2, '0');
+
+    document.getElementById('uptimeDisplay').textContent =
+      h > 0 ? `${hh}:${mm}:${ss}` : `${mm}:${ss}`;
   }, 1000);
 
-  // ─── COUNTDOWN ────────────────────────────────────────
   function startCountdown() {
     clearInterval(countdownInterval);
+
     countdownVal = REFRESH_MS / 1000;
     document.getElementById('countdown').textContent = countdownVal;
+
     countdownInterval = setInterval(() => {
       countdownVal = Math.max(0, countdownVal - 1);
       document.getElementById('countdown').textContent = countdownVal;
     }, 1000);
   }
 
-  // ─── QUALITY ──────────────────────────────────────────
   function evaluerQualite(sat, hdop) {
     if (sat >= 8 && hdop <= 1.2) return { label: 'Excellent', color: '#22c55e', bars: 5 };
-    if (sat >= 6 && hdop <= 2.0) return { label: 'Bon',       color: '#86efac', bars: 4 };
-    if (sat >= 4 && hdop <= 4.0) return { label: 'Moyen',     color: '#facc15', bars: 2 };
-    return                              { label: 'Faible',     color: '#ef4444', bars: 1 };
+    if (sat >= 6 && hdop <= 2.0) return { label: 'Bon', color: '#86efac', bars: 4 };
+    if (sat >= 4 && hdop <= 4.0) return { label: 'Moyen', color: '#facc15', bars: 2 };
+
+    return { label: 'Faible', color: '#ef4444', bars: 1 };
   }
 
   function setQualityBar(bars, color) {
     const spans = document.querySelectorAll('.quality-bar span');
+
     spans.forEach((s, i) => {
       s.style.background = i < bars ? color : 'rgba(255,255,255,0.1)';
       s.style.height = `${12 + i * 3}px`;
     });
   }
 
-  // ─── STATUS PILL ──────────────────────────────────────
   function setStatus(type, text) {
     const pill = document.getElementById('statusPill');
     const dotEl = pill.querySelector('.dot');
     const textEl = document.getElementById('statusText');
+
     pill.className = 'status-pill ' + type;
     dotEl.className = 'dot ' + (type === 'connected' ? 'green' : type === 'error' ? 'red' : 'yellow');
     textEl.textContent = text;
   }
 
-  // ─── HISTORY ──────────────────────────────────────────
   function addHistory(lat, lng) {
-    const now = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const now = new Date().toLocaleTimeString('fr-FR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+
     positionHistory.unshift({ lat, lng, time: now });
-    if (positionHistory.length > 8) positionHistory.pop();
+
+    if (positionHistory.length > 8) {
+      positionHistory.pop();
+    }
 
     const list = document.getElementById('historyList');
+
     list.innerHTML = positionHistory.map(p => `
       <div class="history-item">
         <span class="history-coords">${Number(p.lat).toFixed(5)}, ${Number(p.lng).toFixed(5)}</span>
@@ -869,35 +1206,48 @@
     `).join('');
   }
 
-  // ─── TOAST ────────────────────────────────────────────
   function showToast(msg, type = 'info') {
     const el = document.createElement('div');
     el.className = `toast ${type}`;
     el.textContent = msg;
     el.onclick = () => el.remove();
+
     document.getElementById('toastContainer').appendChild(el);
+
     setTimeout(() => el.remove(), 3200);
   }
 
-  // ─── DISABLE/ENABLE BUTTONS ───────────────────────────
   function enableButtons(lat, lng) {
     const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
     const routeUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+
     const mapEl = document.getElementById('mapsBtn');
     const routeEl = document.getElementById('routeBtn');
     const emerEl = document.getElementById('emergencyBtn');
-    mapEl.href = mapsUrl; mapEl.classList.remove('btn-disabled');
-    routeEl.href = routeUrl; routeEl.classList.remove('btn-disabled');
-    emerEl.href = routeUrl; emerEl.classList.remove('btn-disabled');
+
+    mapEl.href = mapsUrl;
+    routeEl.href = routeUrl;
+    emerEl.href = routeUrl;
+
+    mapEl.classList.remove('btn-disabled');
+    routeEl.classList.remove('btn-disabled');
+    emerEl.classList.remove('btn-disabled');
   }
 
-  // ─── MAIN FETCH ───────────────────────────────────────
   async function chargerPosition(manual = false) {
-    if (manual) showToast('Actualisation manuelle…', 'info');
+    if (manual) {
+      showToast('Actualisation manuelle…', 'info');
+    }
+
     startCountdown();
+
     try {
       const res = await fetch(FIREBASE_URL);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+
       const data = await res.json();
 
       if (!data || data.latitude == null || data.longitude == null) {
@@ -907,76 +1257,82 @@
         return;
       }
 
-      const lat = data.latitude;
-      const lng = data.longitude;
+      const lat = Number(data.latitude);
+      const lng = Number(data.longitude);
       const sat = Number(data.satellites) || 0;
       const hdop = Number(data.hdop) || 99;
 
-      // Validate
       if (isNaN(lat) || isNaN(lng)) {
         console.error('Coordonnées invalides:', data);
         setStatus('error', 'Données invalides');
         return;
       }
 
-      // Counters
       fetchCount++;
       document.getElementById('fetchCount').textContent = fetchCount;
       document.getElementById('errorCount').textContent = errorCount;
 
-      // Stats
-      document.getElementById('latitude').textContent = Number(lat).toFixed(6);
-      document.getElementById('longitude').textContent = Number(lng).toFixed(6);
+      document.getElementById('latitude').textContent = lat.toFixed(6);
+      document.getElementById('longitude').textContent = lng.toFixed(6);
       document.getElementById('satellites').textContent = sat;
       document.getElementById('hdop').textContent = hdop.toFixed(2);
+
       document.getElementById('latDir').textContent = lat >= 0 ? '↑ Nord' : '↓ Sud';
       document.getElementById('lngDir').textContent = lng >= 0 ? '→ Est' : '← Ouest';
       document.getElementById('satStatus').textContent = sat >= 6 ? 'Fix solide' : sat >= 4 ? 'Fix OK' : 'Fix faible';
       document.getElementById('hdopStatus').textContent = hdop <= 1.5 ? 'Très précis' : hdop <= 3 ? 'Précis' : 'Approximatif';
 
-      // Quality
       const q = evaluerQualite(sat, hdop);
+
       document.getElementById('qualityText').textContent = q.label;
       document.getElementById('qualityText').style.color = q.color;
-      setQualityBar(q.bars, q.color);
 
-      // Status
+      setQualityBar(q.bars, q.color);
       setStatus('connected', 'GPS connecté');
 
-      // Last update
       document.getElementById('lastUpdate').textContent =
         'Mis à jour à ' + new Date().toLocaleTimeString('fr-FR');
 
-      // Buttons
       enableButtons(lat, lng);
 
-      // Map (only update if position changed significantly)
-      const moved = lastLat === null || Math.abs(lat - lastLat) > 0.00005 || Math.abs(lng - lastLng) > 0.00005;
+      const moved =
+        lastLat === null ||
+        Math.abs(lat - lastLat) > 0.00005 ||
+        Math.abs(lng - lastLng) > 0.00005;
+
       if (moved) {
         document.getElementById('map').src =
           `https://maps.google.com/maps?q=${lat},${lng}&z=19&output=embed`;
-        lastLat = lat; lastLng = lng;
-      }
 
-      // History (only on position change)
-      if (moved) addHistory(lat, lng);
+        lastLat = lat;
+        lastLng = lng;
+
+        addHistory(lat, lng);
+      }
 
     } catch (err) {
       console.error(err);
+
       errorCount++;
       document.getElementById('errorCount').textContent = errorCount;
+
       setStatus('error', 'Erreur Firebase');
+
       document.getElementById('qualityText').textContent = '—';
       document.getElementById('qualityText').style.color = 'var(--muted)';
+
       setQualityBar(0, 'transparent');
-      if (manual) showToast('Erreur de connexion Firebase', 'error');
+
+      if (manual) {
+        showToast('Erreur de connexion Firebase', 'error');
+      }
     }
   }
 
-  // ─── BOOT ─────────────────────────────────────────────
   chargerPosition();
   setInterval(chargerPosition, REFRESH_MS);
 </script>
 
 </body>
 </html>
+```
