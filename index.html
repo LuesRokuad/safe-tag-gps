@@ -2,502 +2,981 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Safe Tag - Localisation GPS</title>
+  <title>Safe Tag — GPS Tracker</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    * {
-      box-sizing: border-box;
+    :root {
+      --gold: #facc15;
+      --orange: #f97316;
+      --green: #22c55e;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --bg: #020617;
+      --surface: rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.1);
+      --text: #f8fafc;
+      --muted: #64748b;
+      --subtle: #1e293b;
     }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
 
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(250, 204, 21, 0.18), transparent 35%),
-        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.22), transparent 35%),
-        linear-gradient(135deg, #020617, #0f172a 55%, #111827);
-      color: white;
+      font-family: 'Syne', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
+    /* ─── ANIMATED BACKGROUND ─────────────────────────── */
+    .bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .bg-canvas::before {
+      content: '';
+      position: absolute;
+      width: 900px; height: 900px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(250,204,21,0.07) 0%, transparent 70%);
+      top: -300px; left: -200px;
+      animation: drift1 18s ease-in-out infinite alternate;
+    }
+
+    .bg-canvas::after {
+      content: '';
+      position: absolute;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(59,130,246,0.09) 0%, transparent 70%);
+      bottom: -200px; right: -150px;
+      animation: drift2 22s ease-in-out infinite alternate;
+    }
+
+    .bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    }
+
+    @keyframes drift1 { from { transform: translate(0,0) scale(1); } to { transform: translate(80px, 60px) scale(1.15); } }
+    @keyframes drift2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-60px, -40px) scale(1.1); } }
+
+    /* ─── LAYOUT ──────────────────────────────────────── */
     .app {
-      width: 94%;
-      max-width: 1100px;
+      position: relative;
+      z-index: 1;
+      max-width: 1180px;
       margin: 0 auto;
-      padding: 20px 0 35px;
+      padding: 28px 24px 52px;
     }
 
+    /* ─── TOPBAR ──────────────────────────────────────── */
     .topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 15px;
-      padding: 18px 0;
+      padding: 16px 0 28px;
+      gap: 16px;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
 
     .logo {
-      width: 48px;
-      height: 48px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, #facc15, #f97316);
+      width: 52px; height: 52px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--gold), var(--orange));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+      color: #111;
+      box-shadow: 0 0 0 1px rgba(250,204,21,0.3), 0 8px 32px rgba(250,204,21,0.2);
+      flex-shrink: 0;
+    }
+
+    .brand-text h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .brand-text p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .topbar-right {
       display: flex;
       align-items: center;
-      justify-content: center;
-      color: #111827;
-      font-weight: 900;
-      font-size: 21px;
-      box-shadow: 0 12px 28px rgba(250, 204, 21, 0.25);
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
-    .brand h1 {
-      margin: 0;
-      font-size: 28px;
-      letter-spacing: 0.5px;
-    }
-
-    .brand p {
-      margin: 4px 0 0;
-      color: #cbd5e1;
-      font-size: 14px;
-    }
-
-    .badge {
-      padding: 10px 14px;
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
       border-radius: 999px;
-      font-weight: bold;
-      font-size: 14px;
-      background: rgba(34, 197, 94, 0.16);
-      color: #86efac;
-      border: 1px solid rgba(34, 197, 94, 0.35);
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      border: 1px solid;
+      transition: all 0.3s ease;
       white-space: nowrap;
     }
 
-    .hero {
-      margin-top: 12px;
-      padding: 28px;
-      border-radius: 28px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
-      backdrop-filter: blur(16px);
+    .status-pill.connected {
+      background: rgba(34,197,94,0.1);
+      color: #86efac;
+      border-color: rgba(34,197,94,0.3);
     }
 
-    .hero-title {
+    .status-pill.error {
+      background: rgba(239,68,68,0.1);
+      color: #fca5a5;
+      border-color: rgba(239,68,68,0.3);
+    }
+
+    .status-pill.loading {
+      background: rgba(250,204,21,0.1);
+      color: #fde68a;
+      border-color: rgba(250,204,21,0.3);
+    }
+
+    .refresh-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+    }
+
+    /* ─── PULSE DOT ───────────────────────────────────── */
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot.green { background: #22c55e; animation: glow-green 1.5s ease-in-out infinite; }
+    .dot.red   { background: #ef4444; }
+    .dot.yellow { background: #facc15; animation: glow-yellow 1.5s ease-in-out infinite; }
+
+    @keyframes glow-green {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); }
+      50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+    }
+    @keyframes glow-yellow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(250,204,21,0.7); }
+      50% { box-shadow: 0 0 0 6px rgba(250,204,21,0); }
+    }
+
+    /* ─── HERO CARD ───────────────────────────────────── */
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 32px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+      animation: fadeUp 0.5s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 20px;
-      margin-bottom: 22px;
+      gap: 24px;
+      margin-bottom: 28px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
     }
 
-    .hero-title h2 {
-      margin: 0;
-      font-size: 32px;
+    .hero-header h2 {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
     }
 
-    .hero-title p {
-      margin: 8px 0 0;
-      color: #cbd5e1;
-      line-height: 1.5;
+    .hero-header h2 span {
+      background: linear-gradient(90deg, var(--gold), var(--orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .signal {
+    .hero-header p {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.6;
+      max-width: 400px;
+    }
+
+    /* ─── SIGNAL QUALITY ──────────────────────────────── */
+    .quality-block {
       text-align: right;
+      flex-shrink: 0;
     }
 
-    .signal strong {
-      display: block;
-      font-size: 24px;
-      color: #facc15;
+    .quality-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 6px;
     }
 
-    .signal span {
-      color: #cbd5e1;
-      font-size: 13px;
+    .quality-value {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
     }
 
-    .grid {
+    .quality-bar {
+      display: flex;
+      gap: 3px;
+      margin-top: 8px;
+      justify-content: flex-end;
+    }
+
+    .quality-bar span {
+      width: 5px; height: 18px;
+      border-radius: 3px;
+      background: var(--border);
+      transition: background 0.4s ease, height 0.4s ease;
+    }
+
+    /* ─── STATS GRID ──────────────────────────────────── */
+    .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-top: 18px;
+      gap: 12px;
     }
 
     .stat {
-      background: rgba(15, 23, 42, 0.75);
-      border: 1px solid rgba(148, 163, 184, 0.18);
+      background: rgba(15,23,42,0.7);
+      border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 17px;
-      min-height: 100px;
+      padding: 20px 18px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s ease, transform 0.2s ease;
     }
 
-    .stat .label {
-      font-size: 13px;
-      color: #94a3b8;
-      margin-bottom: 9px;
+    .stat:hover { transform: translateY(-2px); }
+
+    .stat::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      border-radius: 2px 2px 0 0;
+      opacity: 0.7;
     }
 
-    .stat .value {
+    .stat.lat::before { background: linear-gradient(90deg, var(--blue), transparent); }
+    .stat.lng::before { background: linear-gradient(90deg, var(--gold), transparent); }
+    .stat.sat::before { background: linear-gradient(90deg, var(--green), transparent); }
+    .stat.hdop::before { background: linear-gradient(90deg, var(--orange), transparent); }
+
+    .stat-icon {
       font-size: 20px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 22px;
       font-weight: 800;
-      color: #f8fafc;
-      word-break: break-word;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -0.5px;
+      transition: color 0.3s ease;
     }
 
-    .stat.good .value {
-      color: #86efac;
+    .stat-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      font-family: 'JetBrains Mono', monospace;
     }
 
-    .stat.warning .value {
-      color: #facc15;
-    }
-
+    /* ─── ACTIONS ─────────────────────────────────────── */
     .actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
       margin-top: 24px;
     }
 
-    .button {
-      border: none;
-      text-decoration: none;
-      padding: 14px 18px;
-      border-radius: 16px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: 0.18s ease;
-      font-size: 15px;
+    .btn {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
       gap: 8px;
+      padding: 13px 20px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 14px;
+      font-family: 'Syne', sans-serif;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+      white-space: nowrap;
     }
 
-    .button:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.08);
+    .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold), var(--orange));
+      color: #111;
+      box-shadow: 0 4px 20px rgba(250,204,21,0.25);
     }
 
-    .primary {
-      background: linear-gradient(135deg, #facc15, #f97316);
-      color: #111827;
+    .btn-ghost {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
     }
 
-    .secondary {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.18);
+    .btn-ghost:hover { background: rgba(255,255,255,0.08); }
+
+    .btn-danger {
+      background: rgba(239,68,68,0.12);
+      color: #fca5a5;
+      border: 1px solid rgba(239,68,68,0.28);
     }
 
-    .danger {
-      background: rgba(239, 68, 68, 0.14);
-      color: #fecaca;
-      border: 1px solid rgba(239, 68, 68, 0.32);
+    .btn-danger:hover { background: rgba(239,68,68,0.2); }
+
+    .btn-disabled {
+      opacity: 0.4;
+      pointer-events: none;
     }
 
+    /* ─── BOTTOM GRID ─────────────────────────────────── */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    /* ─── MAP CARD ────────────────────────────────────── */
     .map-card {
-      margin-top: 22px;
       border-radius: 28px;
       overflow: hidden;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+      animation: fadeUp 0.5s 0.1s ease both;
     }
 
     .map-header {
-      padding: 18px 22px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      background: rgba(15, 23, 42, 0.68);
+      padding: 18px 22px;
+      background: rgba(15,23,42,0.7);
+      border-bottom: 1px solid var(--border);
     }
 
     .map-header h3 {
-      margin: 0;
-      font-size: 20px;
+      font-size: 16px;
+      font-weight: 700;
     }
 
     .map-header p {
-      margin: 5px 0 0;
-      color: #94a3b8;
-      font-size: 14px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+      font-family: 'JetBrains Mono', monospace;
     }
 
-    iframe {
-      width: 100%;
-      height: 520px;
-      border: none;
-      display: block;
+    .map-zoom-badge {
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--muted);
+      padding: 6px 12px;
+      background: var(--subtle);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    #map {
+      width: 100%; height: 480px;
+      border: none; display: block;
       background: #111827;
     }
 
+    /* ─── SIDE PANEL ──────────────────────────────────── */
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      animation: fadeUp 0.5s 0.15s ease both;
+    }
+
+    .panel-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 22px;
+      backdrop-filter: blur(16px);
+    }
+
+    .panel-card h4 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 16px;
+    }
+
+    /* ─── HISTORY ─────────────────────────────────────── */
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .history-list::-webkit-scrollbar { width: 4px; }
+    .history-list::-webkit-scrollbar-track { background: transparent; }
+    .history-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: rgba(15,23,42,0.6);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-8px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .history-coords { color: var(--text); font-weight: 600; }
+    .history-time { color: var(--muted); }
+
+    .history-empty {
+      font-size: 13px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    /* ─── UPTIME COUNTER ──────────────────────────────── */
+    .uptime-display {
+      font-size: 36px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--gold);
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .uptime-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 6px;
+    }
+
+    .uptime-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .uptime-mini {
+      background: rgba(15,23,42,0.6);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .uptime-mini .val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .uptime-mini .lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ─── FOOTER ──────────────────────────────────────── */
     .footer {
       text-align: center;
-      color: #94a3b8;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 32px;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.3px;
+    }
+
+    .footer a { color: var(--muted); text-decoration: none; }
+    .footer a:hover { color: var(--gold); }
+
+    /* ─── TOAST ───────────────────────────────────────── */
+    .toast-container {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      display: flex; flex-direction: column; gap: 8px;
+      z-index: 999;
+    }
+
+    .toast {
+      padding: 12px 18px;
+      border-radius: 14px;
       font-size: 13px;
-      margin-top: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      border: 1px solid;
+      animation: toastIn 0.3s ease;
+      cursor: pointer;
     }
 
-    .pulse {
-      width: 10px;
-      height: 10px;
-      background: #22c55e;
-      border-radius: 50%;
+    .toast.success { background: rgba(34,197,94,0.12); color: #86efac; border-color: rgba(34,197,94,0.3); }
+    .toast.error   { background: rgba(239,68,68,0.12); color: #fca5a5; border-color: rgba(239,68,68,0.3); }
+    .toast.info    { background: rgba(59,130,246,0.12); color: #93c5fd; border-color: rgba(59,130,246,0.3); }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── SKELETON ────────────────────────────────────── */
+    .skeleton {
       display: inline-block;
-      box-shadow: 0 0 0 rgba(34, 197, 94, 0.7);
-      animation: pulse 1.4s infinite;
+      width: 90px; height: 22px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--subtle) 25%, rgba(255,255,255,0.06) 50%, var(--subtle) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      vertical-align: middle;
     }
 
-    @keyframes pulse {
-      0% {
-        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.65);
-      }
-      70% {
-        box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
-      }
-      100% {
-        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
-      }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
 
-    @media (max-width: 850px) {
-      .topbar {
-        align-items: flex-start;
-      }
-
-      .hero-title {
-        flex-direction: column;
-      }
-
-      .signal {
-        text-align: left;
-      }
-
-      .grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      iframe {
-        height: 430px;
-      }
+    /* ─── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 960px) {
+      .bottom-grid { grid-template-columns: 1fr; }
+      .side-panel { flex-direction: row; flex-wrap: wrap; }
+      .side-panel .panel-card { flex: 1; min-width: 260px; }
+      #map { height: 400px; }
     }
 
-    @media (max-width: 560px) {
-      .app {
-        width: 92%;
-      }
+    @media (max-width: 700px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero-header { flex-direction: column; }
+      .quality-block { text-align: left; }
+      .quality-bar { justify-content: flex-start; }
+    }
 
-      .brand h1 {
-        font-size: 24px;
-      }
-
-      .topbar {
-        flex-direction: column;
-      }
-
-      .hero {
-        padding: 20px;
-        border-radius: 24px;
-      }
-
-      .hero-title h2 {
-        font-size: 25px;
-      }
-
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .actions {
-        flex-direction: column;
-      }
-
-      .button {
-        width: 100%;
-      }
-
-      iframe {
-        height: 360px;
-      }
-
-      .map-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+    @media (max-width: 500px) {
+      .app { padding: 16px 16px 40px; }
+      .topbar { flex-direction: column; align-items: flex-start; }
+      .topbar-right { justify-content: flex-start; }
+      .hero { padding: 22px 18px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .btn { width: 100%; justify-content: center; }
+      .actions { flex-direction: column; }
+      .side-panel { flex-direction: column; }
+      #map { height: 320px; }
     }
   </style>
 </head>
 
 <body>
 
-  <main class="app">
+<div class="bg-canvas"><div class="bg-grid"></div></div>
 
-    <section class="topbar">
-      <div class="brand">
-        <div class="logo">ST</div>
-        <div>
-          <h1>Safe Tag</h1>
-          <p>Collier GPS connecté</p>
+<div class="toast-container" id="toastContainer"></div>
+
+<main class="app">
+
+  <!-- TOPBAR -->
+  <section class="topbar">
+    <div class="brand">
+      <div class="logo">ST</div>
+      <div class="brand-text">
+        <h1>Safe Tag</h1>
+        <p>Wemos D1 · Firebase · GPS L76</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="refresh-counter" id="refreshCounter">Prochain refresh dans <span id="countdown">3</span>s</div>
+      <div class="status-pill loading" id="statusPill">
+        <span class="dot yellow"></span>
+        <span id="statusText">Connexion…</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERO CARD -->
+  <section class="hero">
+    <div class="hero-header">
+      <div>
+        <h2>Position <span>en direct</span></h2>
+        <p>Dernière position transmise par le collier GPS via Firebase Realtime Database. Rafraîchissement automatique toutes les 3 secondes.</p>
+      </div>
+      <div class="quality-block">
+        <div class="quality-label">Qualité signal</div>
+        <div class="quality-value" id="qualityText" style="color: var(--muted);">—</div>
+        <div class="quality-bar" id="qualityBar">
+          <span></span><span></span><span></span><span></span><span></span>
         </div>
       </div>
+    </div>
 
-      <div class="badge" id="statusBadge">
-        <span class="pulse"></span>
-        GPS connecté
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat lat">
+        <span class="stat-icon">🧭</span>
+        <div class="stat-label">Latitude</div>
+        <div class="stat-value" id="latitude"><span class="skeleton"></span></div>
+        <div class="stat-sub" id="latDir">—</div>
       </div>
-    </section>
-
-    <section class="hero">
-      <div class="hero-title">
-        <div>
-          <h2>Position en temps réel</h2>
-          <p>
-            Suis la dernière position envoyée par le collier GPS depuis Firebase.
-            Tu peux ouvrir la carte ou lancer un itinéraire directement.
-          </p>
-        </div>
-
-        <div class="signal">
-          <strong id="qualityText">...</strong>
-          <span>Qualité du signal</span>
-        </div>
+      <div class="stat lng">
+        <span class="stat-icon">🌐</span>
+        <div class="stat-label">Longitude</div>
+        <div class="stat-value" id="longitude"><span class="skeleton"></span></div>
+        <div class="stat-sub" id="lngDir">—</div>
       </div>
-
-      <div class="grid">
-        <div class="stat">
-          <div class="label">Latitude</div>
-          <div class="value" id="latitude">...</div>
-        </div>
-
-        <div class="stat">
-          <div class="label">Longitude</div>
-          <div class="value" id="longitude">...</div>
-        </div>
-
-        <div class="stat good">
-          <div class="label">Satellites</div>
-          <div class="value" id="satellites">...</div>
-        </div>
-
-        <div class="stat warning">
-          <div class="label">Précision HDOP</div>
-          <div class="value" id="hdop">...</div>
-        </div>
+      <div class="stat sat">
+        <span class="stat-icon">🛰</span>
+        <div class="stat-label">Satellites</div>
+        <div class="stat-value" id="satellites"><span class="skeleton"></span></div>
+        <div class="stat-sub" id="satStatus">—</div>
       </div>
-
-      <div class="actions">
-        <a id="mapsButton" class="button primary" href="#" target="_blank">
-          Voir dans Google Maps
-        </a>
-
-        <a id="routeButton" class="button secondary" href="#" target="_blank">
-          Itinéraire jusqu’au GPS
-        </a>
-
-        <button class="button secondary" onclick="chargerPosition()">
-          Actualiser
-        </button>
-
-        <a id="emergencyButton" class="button danger" href="#" target="_blank">
-          Retrouver maintenant
-        </a>
+      <div class="stat hdop">
+        <span class="stat-icon">📡</span>
+        <div class="stat-label">Précision HDOP</div>
+        <div class="stat-value" id="hdop"><span class="skeleton"></span></div>
+        <div class="stat-sub" id="hdopStatus">—</div>
       </div>
-    </section>
+    </div>
 
+    <!-- ACTIONS -->
+    <div class="actions">
+      <a id="mapsBtn" class="btn btn-primary btn-disabled" href="#" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Google Maps
+      </a>
+      <a id="routeBtn" class="btn btn-ghost btn-disabled" href="#" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12h18m-6-6 6 6-6 6"/></svg>
+        Itinéraire
+      </a>
+      <button class="btn btn-ghost" onclick="chargerPosition(true)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+        Actualiser
+      </button>
+      <a id="emergencyBtn" class="btn btn-danger btn-disabled" href="#" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Retrouver maintenant
+      </a>
+    </div>
+  </section>
+
+  <!-- BOTTOM GRID -->
+  <div class="bottom-grid">
+
+    <!-- MAP -->
     <section class="map-card">
       <div class="map-header">
         <div>
-          <h3>Carte GPS</h3>
-          <p id="lastUpdate">Dernière mise à jour du site : ...</p>
+          <h3>📍 Carte GPS live</h3>
+          <p id="lastUpdate">En attente de données…</p>
+        </div>
+        <div class="map-zoom-badge">Zoom ×19</div>
+      </div>
+      <iframe id="map" src="" allowfullscreen loading="lazy"></iframe>
+    </section>
+
+    <!-- SIDE PANEL -->
+    <div class="side-panel">
+
+      <!-- UPTIME -->
+      <div class="panel-card">
+        <h4>Session</h4>
+        <div class="uptime-display" id="uptimeDisplay">00:00</div>
+        <div class="uptime-label">Durée de session</div>
+        <div class="uptime-row">
+          <div class="uptime-mini">
+            <div class="val" id="fetchCount" style="color: var(--green)">0</div>
+            <div class="lbl">Fetch réussis</div>
+          </div>
+          <div class="uptime-mini">
+            <div class="val" id="errorCount" style="color: var(--red)">0</div>
+            <div class="lbl">Erreurs</div>
+          </div>
         </div>
       </div>
 
-      <iframe id="map" src=""></iframe>
-    </section>
+      <!-- HISTORIQUE -->
+      <div class="panel-card">
+        <h4>Historique positions</h4>
+        <div class="history-list" id="historyList">
+          <div class="history-empty">Aucune position encore…</div>
+        </div>
+      </div>
 
-    <div class="footer">
-      Safe Tag — Projet GPS connecté avec Wemos D1 mini, Firebase et GitHub Pages.
     </div>
+  </div>
 
-  </main>
+  <div class="footer">
+    Safe Tag © 2025 — Wemos D1 mini · Firebase RTDB · GitHub Pages
+    <br>Refresh automatique toutes les 3 secondes
+  </div>
 
-  <script>
-    const firebaseURL = "https://colliergps-default-rtdb.asia-southeast1.firebasedatabase.app/safeTag/position.json";
+</main>
 
-    function evaluerQualite(satellites, hdop) {
-      if (satellites >= 8 && hdop <= 1.2) {
-        return "Excellent";
+<script>
+  const FIREBASE_URL = "https://colliergps-default-rtdb.asia-southeast1.firebasedatabase.app/safeTag/position.json";
+  const REFRESH_MS = 3000;
+
+  // ─── STATE ────────────────────────────────────────────
+  let fetchCount = 0;
+  let errorCount = 0;
+  let sessionStart = Date.now();
+  let positionHistory = [];
+  let lastLat = null, lastLng = null;
+  let countdownVal = REFRESH_MS / 1000;
+  let countdownInterval = null;
+
+  // ─── UPTIME ───────────────────────────────────────────
+  setInterval(() => {
+    const s = Math.floor((Date.now() - sessionStart) / 1000);
+    const m = Math.floor(s / 60);
+    const h = Math.floor(m / 60);
+    const ss = String(s % 60).padStart(2,'0');
+    const mm = String(m % 60).padStart(2,'0');
+    const hh = String(h).padStart(2,'0');
+    document.getElementById('uptimeDisplay').textContent = h > 0 ? `${hh}:${mm}:${ss}` : `${mm}:${ss}`;
+  }, 1000);
+
+  // ─── COUNTDOWN ────────────────────────────────────────
+  function startCountdown() {
+    clearInterval(countdownInterval);
+    countdownVal = REFRESH_MS / 1000;
+    document.getElementById('countdown').textContent = countdownVal;
+    countdownInterval = setInterval(() => {
+      countdownVal = Math.max(0, countdownVal - 1);
+      document.getElementById('countdown').textContent = countdownVal;
+    }, 1000);
+  }
+
+  // ─── QUALITY ──────────────────────────────────────────
+  function evaluerQualite(sat, hdop) {
+    if (sat >= 8 && hdop <= 1.2) return { label: 'Excellent', color: '#22c55e', bars: 5 };
+    if (sat >= 6 && hdop <= 2.0) return { label: 'Bon',       color: '#86efac', bars: 4 };
+    if (sat >= 4 && hdop <= 4.0) return { label: 'Moyen',     color: '#facc15', bars: 2 };
+    return                              { label: 'Faible',     color: '#ef4444', bars: 1 };
+  }
+
+  function setQualityBar(bars, color) {
+    const spans = document.querySelectorAll('.quality-bar span');
+    spans.forEach((s, i) => {
+      s.style.background = i < bars ? color : 'rgba(255,255,255,0.1)';
+      s.style.height = `${12 + i * 3}px`;
+    });
+  }
+
+  // ─── STATUS PILL ──────────────────────────────────────
+  function setStatus(type, text) {
+    const pill = document.getElementById('statusPill');
+    const dotEl = pill.querySelector('.dot');
+    const textEl = document.getElementById('statusText');
+    pill.className = 'status-pill ' + type;
+    dotEl.className = 'dot ' + (type === 'connected' ? 'green' : type === 'error' ? 'red' : 'yellow');
+    textEl.textContent = text;
+  }
+
+  // ─── HISTORY ──────────────────────────────────────────
+  function addHistory(lat, lng) {
+    const now = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    positionHistory.unshift({ lat, lng, time: now });
+    if (positionHistory.length > 8) positionHistory.pop();
+
+    const list = document.getElementById('historyList');
+    list.innerHTML = positionHistory.map(p => `
+      <div class="history-item">
+        <span class="history-coords">${Number(p.lat).toFixed(5)}, ${Number(p.lng).toFixed(5)}</span>
+        <span class="history-time">${p.time}</span>
+      </div>
+    `).join('');
+  }
+
+  // ─── TOAST ────────────────────────────────────────────
+  function showToast(msg, type = 'info') {
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    el.textContent = msg;
+    el.onclick = () => el.remove();
+    document.getElementById('toastContainer').appendChild(el);
+    setTimeout(() => el.remove(), 3200);
+  }
+
+  // ─── DISABLE/ENABLE BUTTONS ───────────────────────────
+  function enableButtons(lat, lng) {
+    const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+    const routeUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    const mapEl = document.getElementById('mapsBtn');
+    const routeEl = document.getElementById('routeBtn');
+    const emerEl = document.getElementById('emergencyBtn');
+    mapEl.href = mapsUrl; mapEl.classList.remove('btn-disabled');
+    routeEl.href = routeUrl; routeEl.classList.remove('btn-disabled');
+    emerEl.href = routeUrl; emerEl.classList.remove('btn-disabled');
+  }
+
+  // ─── MAIN FETCH ───────────────────────────────────────
+  async function chargerPosition(manual = false) {
+    if (manual) showToast('Actualisation manuelle…', 'info');
+    startCountdown();
+    try {
+      const res = await fetch(FIREBASE_URL);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      if (!data || data.latitude == null || data.longitude == null) {
+        setStatus('error', 'Aucune donnée');
+        document.getElementById('qualityText').textContent = '—';
+        document.getElementById('qualityText').style.color = 'var(--muted)';
+        return;
       }
 
-      if (satellites >= 6 && hdop <= 2.0) {
-        return "Bon";
+      const lat = data.latitude;
+      const lng = data.longitude;
+      const sat = Number(data.satellites) || 0;
+      const hdop = Number(data.hdop) || 99;
+
+      // Validate
+      if (isNaN(lat) || isNaN(lng)) {
+        console.error('Coordonnées invalides:', data);
+        setStatus('error', 'Données invalides');
+        return;
       }
 
-      if (satellites >= 4 && hdop <= 4.0) {
-        return "Moyen";
+      // Counters
+      fetchCount++;
+      document.getElementById('fetchCount').textContent = fetchCount;
+      document.getElementById('errorCount').textContent = errorCount;
+
+      // Stats
+      document.getElementById('latitude').textContent = Number(lat).toFixed(6);
+      document.getElementById('longitude').textContent = Number(lng).toFixed(6);
+      document.getElementById('satellites').textContent = sat;
+      document.getElementById('hdop').textContent = hdop.toFixed(2);
+      document.getElementById('latDir').textContent = lat >= 0 ? '↑ Nord' : '↓ Sud';
+      document.getElementById('lngDir').textContent = lng >= 0 ? '→ Est' : '← Ouest';
+      document.getElementById('satStatus').textContent = sat >= 6 ? 'Fix solide' : sat >= 4 ? 'Fix OK' : 'Fix faible';
+      document.getElementById('hdopStatus').textContent = hdop <= 1.5 ? 'Très précis' : hdop <= 3 ? 'Précis' : 'Approximatif';
+
+      // Quality
+      const q = evaluerQualite(sat, hdop);
+      document.getElementById('qualityText').textContent = q.label;
+      document.getElementById('qualityText').style.color = q.color;
+      setQualityBar(q.bars, q.color);
+
+      // Status
+      setStatus('connected', 'GPS connecté');
+
+      // Last update
+      document.getElementById('lastUpdate').textContent =
+        'Mis à jour à ' + new Date().toLocaleTimeString('fr-FR');
+
+      // Buttons
+      enableButtons(lat, lng);
+
+      // Map (only update if position changed significantly)
+      const moved = lastLat === null || Math.abs(lat - lastLat) > 0.00005 || Math.abs(lng - lastLng) > 0.00005;
+      if (moved) {
+        document.getElementById('map').src =
+          `https://maps.google.com/maps?q=${lat},${lng}&z=19&output=embed`;
+        lastLat = lat; lastLng = lng;
       }
 
-      return "Faible";
+      // History (only on position change)
+      if (moved) addHistory(lat, lng);
+
+    } catch (err) {
+      console.error(err);
+      errorCount++;
+      document.getElementById('errorCount').textContent = errorCount;
+      setStatus('error', 'Erreur Firebase');
+      document.getElementById('qualityText').textContent = '—';
+      document.getElementById('qualityText').style.color = 'var(--muted)';
+      setQualityBar(0, 'transparent');
+      if (manual) showToast('Erreur de connexion Firebase', 'error');
     }
+  }
 
-    async function chargerPosition() {
-      try {
-        const response = await fetch(firebaseURL);
-        const data = await response.json();
-
-        if (!data) {
-          document.getElementById("statusBadge").innerHTML = "Aucune donnée";
-          document.getElementById("qualityText").textContent = "...";
-          return;
-        }
-
-        const latitude = data.latitude;
-        const longitude = data.longitude;
-        const satellites = Number(data.satellites);
-        const hdop = Number(data.hdop);
-
-        document.getElementById("latitude").textContent = latitude;
-        document.getElementById("longitude").textContent = longitude;
-        document.getElementById("satellites").textContent = satellites;
-        document.getElementById("hdop").textContent = hdop;
-
-        document.getElementById("statusBadge").innerHTML = '<span class="pulse"></span> GPS connecté';
-
-        const qualite = evaluerQualite(satellites, hdop);
-        document.getElementById("qualityText").textContent = qualite;
-
-        document.getElementById("lastUpdate").textContent =
-          "Dernière mise à jour du site : " + new Date().toLocaleString();
-
-        const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
-        document.getElementById("mapsButton").href = mapsUrl;
-
-        const routeUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
-        document.getElementById("routeButton").href = routeUrl;
-        document.getElementById("emergencyButton").href = routeUrl;
-
-        const mapEmbed = `https://maps.google.com/maps?q=${latitude},${longitude}&z=19&output=embed`;
-        document.getElementById("map").src = mapEmbed;
-
-      } catch (error) {
-        console.log(error);
-        document.getElementById("statusBadge").innerHTML = "Erreur Firebase";
-        document.getElementById("qualityText").textContent = "...";
-      }
-    }
-
-    chargerPosition();
-    setInterval(chargerPosition, 3000);
-  </script>
+  // ─── BOOT ─────────────────────────────────────────────
+  chargerPosition();
+  setInterval(chargerPosition, REFRESH_MS);
+</script>
 
 </body>
 </html>
