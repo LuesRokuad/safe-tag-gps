@@ -1,4 +1,4 @@
-const CACHE_NAME = "safe-tag-v1";
+const CACHE_NAME = "safe-tag-v2";
 
 const FILES_TO_CACHE = [
   "/",
