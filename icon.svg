@@ -1,169 +1,66 @@
-```svg
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-
   <defs>
-    <!-- Fond bleu sombre -->
     <radialGradient id="bgGradient" cx="50%" cy="35%" r="75%">
       <stop offset="0%" stop-color="#123b7a"/>
       <stop offset="45%" stop-color="#061b44"/>
       <stop offset="100%" stop-color="#020817"/>
     </radialGradient>
-
-    <!-- Contour orange -->
     <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#ffd34d"/>
       <stop offset="45%" stop-color="#ff9900"/>
       <stop offset="100%" stop-color="#f97316"/>
     </linearGradient>
-
-    <!-- Blanc métallique -->
     <linearGradient id="whiteGradient" x1="20%" y1="0%" x2="80%" y2="100%">
       <stop offset="0%" stop-color="#ffffff"/>
       <stop offset="45%" stop-color="#f1f5f9"/>
       <stop offset="100%" stop-color="#cbd5e1"/>
     </linearGradient>
-
-    <!-- Bleu du bouclier -->
     <linearGradient id="shieldBlue" x1="25%" y1="0%" x2="80%" y2="100%">
       <stop offset="0%" stop-color="#19c7ff"/>
       <stop offset="35%" stop-color="#006dff"/>
       <stop offset="100%" stop-color="#001e8a"/>
     </linearGradient>
-
-    <!-- Ombre douce -->
     <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
       <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity="0.45"/>
     </filter>
-
-    <!-- Glow orange -->
     <filter id="orangeGlow" x="-50%" y="-50%" width="200%" height="200%">
       <feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#f97316" flood-opacity="0.85"/>
     </filter>
-
-    <!-- Ombre interne légère -->
     <filter id="innerShadow" x="-30%" y="-30%" width="160%" height="160%">
       <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#020617" flood-opacity="0.55"/>
     </filter>
   </defs>
 
-  <!-- Background -->
   <rect width="512" height="512" rx="96" fill="url(#bgGradient)"/>
-
-  <!-- Glow derrière le logo -->
   <ellipse cx="256" cy="278" rx="160" ry="180" fill="#005eff" opacity="0.18"/>
 
-  <!-- Bouclier contour orange extérieur -->
-  <path
-    d="M256 42
-       C305 82 362 101 426 113
-       C433 211 415 302 370 374
-       C337 426 294 458 256 475
-       C218 458 175 426 142 374
-       C97 302 79 211 86 113
-       C150 101 207 82 256 42Z"
-    fill="url(#orangeGradient)"
-    filter="url(#orangeGlow)"
-  />
+  <path d="M256 42 C305 82 362 101 426 113 C433 211 415 302 370 374 C337 426 294 458 256 475 C218 458 175 426 142 374 C97 302 79 211 86 113 C150 101 207 82 256 42Z"
+    fill="url(#orangeGradient)" filter="url(#orangeGlow)"/>
 
-  <!-- Bouclier blanc -->
-  <path
-    d="M256 63
-       C300 97 351 116 407 128
-       C411 216 394 294 355 357
-       C326 403 288 431 256 446
-       C224 431 186 403 157 357
-       C118 294 101 216 105 128
-       C161 116 212 97 256 63Z"
-    fill="url(#whiteGradient)"
-    filter="url(#shadow)"
-  />
+  <path d="M256 63 C300 97 351 116 407 128 C411 216 394 294 355 357 C326 403 288 431 256 446 C224 431 186 403 157 357 C118 294 101 216 105 128 C161 116 212 97 256 63Z"
+    fill="url(#whiteGradient)" filter="url(#shadow)"/>
 
-  <!-- Bouclier bleu intérieur -->
-  <path
-    d="M256 96
-       C292 124 335 140 381 151
-       C381 224 366 290 333 341
-       C309 379 279 404 256 416
-       C233 404 203 379 179 341
-       C146 290 131 224 131 151
-       C177 140 220 124 256 96Z"
-    fill="url(#shieldBlue)"
-    filter="url(#innerShadow)"
-  />
+  <path d="M256 96 C292 124 335 140 381 151 C381 224 366 290 333 341 C309 379 279 404 256 416 C233 404 203 379 179 341 C146 290 131 224 131 151 C177 140 220 124 256 96Z"
+    fill="url(#shieldBlue)" filter="url(#innerShadow)"/>
 
-  <!-- Highlight bleu haut gauche -->
-  <path
-    d="M157 160
-       C194 150 224 134 256 111
-       C288 134 320 148 356 159
-       C314 157 272 164 235 183
-       C204 199 180 220 157 247Z"
-    fill="#7dd3fc"
-    opacity="0.28"
-  />
+  <path d="M157 160 C194 150 224 134 256 111 C288 134 320 148 356 159 C314 157 272 164 235 183 C204 199 180 220 157 247Z"
+    fill="#7dd3fc" opacity="0.28"/>
 
-  <!-- Contour orange fin intérieur -->
-  <path
-    d="M256 96
-       C292 124 335 140 381 151
-       C381 224 366 290 333 341
-       C309 379 279 404 256 416
-       C233 404 203 379 179 341
-       C146 290 131 224 131 151
-       C177 140 220 124 256 96Z"
-    fill="none"
-    stroke="#ff9f1c"
-    stroke-width="5"
-    opacity="0.95"
-  />
+  <path d="M256 96 C292 124 335 140 381 151 C381 224 366 290 333 341 C309 379 279 404 256 416 C233 404 203 379 179 341 C146 290 131 224 131 151 C177 140 220 124 256 96Z"
+    fill="none" stroke="#ff9f1c" stroke-width="5" opacity="0.95"/>
 
-  <!-- Pin localisation ombre orange -->
-  <path
-    d="M256 158
-       C216 158 184 190 184 230
-       C184 287 256 360 256 360
-       C256 360 328 287 328 230
-       C328 190 296 158 256 158Z"
-    fill="#f97316"
-    opacity="0.95"
-    transform="translate(0,8)"
-  />
+  <path d="M256 158 C216 158 184 190 184 230 C184 287 256 360 256 360 C256 360 328 287 328 230 C328 190 296 158 256 158Z"
+    fill="#f97316" opacity="0.95" transform="translate(0,8)"/>
 
-  <!-- Pin localisation blanc -->
-  <path
-    d="M256 147
-       C213 147 178 182 178 225
-       C178 287 256 371 256 371
-       C256 371 334 287 334 225
-       C334 182 299 147 256 147Z"
-    fill="url(#whiteGradient)"
-    filter="url(#shadow)"
-  />
+  <path d="M256 147 C213 147 178 182 178 225 C178 287 256 371 256 371 C256 371 334 287 334 225 C334 182 299 147 256 147Z"
+    fill="url(#whiteGradient)" filter="url(#shadow)"/>
 
-  <!-- Trou du pin -->
   <circle cx="256" cy="226" r="32" fill="#003dd8"/>
   <circle cx="256" cy="226" r="26" fill="#0057ff"/>
 
-  <!-- Reflet sur le pin -->
-  <path
-    d="M220 176
-       C236 164 260 160 279 168
-       C248 171 225 188 211 214
-       C211 198 214 185 220 176Z"
-    fill="#ffffff"
-    opacity="0.45"
-  />
+  <path d="M220 176 C236 164 260 160 279 168 C248 171 225 188 211 214 C211 198 214 185 220 176Z"
+    fill="#ffffff" opacity="0.45"/>
 
-  <!-- Petit reflet blanc sur bouclier -->
-  <path
-    d="M132 138
-       C185 128 224 108 256 82
-       C283 105 319 121 363 132
-       C318 123 284 119 256 121
-       C212 125 174 140 141 165Z"
-    fill="#ffffff"
-    opacity="0.28"
-  />
-
+  <path d="M132 138 C185 128 224 108 256 82 C283 105 319 121 363 132 C318 123 284 119 256 121 C212 125 174 140 141 165Z"
+    fill="#ffffff" opacity="0.28"/>
 </svg>
-```
