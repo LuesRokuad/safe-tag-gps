@@ -216,13 +216,305 @@ footer {
   #map { height:430px; }
 }
 @media (max-width:660px) {
-  .app-shell { width:min(100% - 18px,1320px); padding-top:10px; }
-  .topbar { top:8px; padding:14px; }
-  .clock { display:none; }
-  .hero { padding:24px 20px; }
-  .hero h2 { font-size:2.65rem; }
-  .signal-meta,.map-footer,.stats-panel { grid-template-columns:1fr; }
-  #map { height:380px; }
-  .map-panel,.detail-card { padding:16px; }
-  footer { flex-direction:column; }
+  body {
+    background:
+      radial-gradient(circle at 50% -10%, rgba(255,159,26,.10), transparent 28%),
+      linear-gradient(180deg, #070a10 0%, #090d17 100%);
+  }
+
+  .background-grid {
+    opacity: .14;
+    background-size: 32px 32px;
+  }
+
+  .app-shell {
+    width: 100%;
+    padding: 0 10px 24px;
+  }
+
+  .topbar {
+    position: relative;
+    top: auto;
+    margin: 10px 0 12px;
+    padding: 12px;
+    border-radius: 18px;
+    gap: 10px;
+  }
+
+  .brand {
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .brand-logo {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    flex: 0 0 46px;
+  }
+
+  .brand h1 {
+    font-size: 1rem;
+    line-height: 1.15;
+  }
+
+  .eyebrow {
+    font-size: .63rem;
+    letter-spacing: .14em;
+  }
+
+  .topbar-actions {
+    min-width: 0;
+  }
+
+  .live-pill {
+    padding: 8px 10px;
+    font-size: .74rem;
+    line-height: 1.2;
+    border-radius: 16px;
+    max-width: 145px;
+  }
+
+  .clock {
+    display: none;
+  }
+
+  .hero {
+    margin-top: 0;
+    padding: 20px 16px;
+    border-radius: 20px;
+    gap: 18px;
+  }
+
+  .hero h2 {
+    font-size: clamp(2rem, 12vw, 3rem);
+    line-height: .98;
+    margin: 8px 0 12px;
+  }
+
+  .hero p {
+    font-size: .92rem;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .hero-actions {
+    margin-top: 18px;
+  }
+
+  .btn {
+    width: 100%;
+    min-height: 48px;
+    padding: 13px 14px;
+  }
+
+  .signal-card {
+    min-height: 0;
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .signal-bars {
+    height: 52px;
+    margin: 16px 0;
+    gap: 7px;
+  }
+
+  .signal-bars span {
+    width: 12px;
+  }
+
+  .signal-meta {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .signal-meta div {
+    min-height: 60px;
+    padding: 10px 8px;
+  }
+
+  .signal-meta small {
+    font-size: .68rem;
+  }
+
+  .signal-meta strong {
+    font-size: .86rem;
+  }
+
+  .dashboard-grid,
+  .details-grid {
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .map-panel,
+  .detail-card {
+    padding: 14px;
+    border-radius: 20px;
+  }
+
+  .panel-header {
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .panel-header h3 {
+    font-size: 1.15rem;
+  }
+
+  .map-status {
+    padding: 7px 9px;
+    font-size: .72rem;
+  }
+
+  #map {
+    height: 290px;
+    border-radius: 16px;
+  }
+
+  .map-empty {
+    border-radius: 16px;
+    padding: 22px 18px;
+  }
+
+  .map-empty strong {
+    font-size: .95rem;
+  }
+
+  .map-empty span {
+    font-size: .78rem;
+    line-height: 1.45;
+  }
+
+  .map-footer {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .map-footer div {
+    min-height: 58px;
+    padding: 10px;
+  }
+
+  .map-footer div:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
+  .map-footer small {
+    font-size: .7rem;
+  }
+
+  .map-footer strong {
+    font-size: .88rem;
+    word-break: break-word;
+  }
+
+  .stats-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .stat-card {
+    min-height: 112px;
+    padding: 14px;
+    gap: 10px;
+    border-radius: 18px;
+    align-items: flex-start;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    flex: 0 0 40px;
+  }
+
+  .stat-card span {
+    font-size: .75rem;
+  }
+
+  .stat-card strong {
+    font-size: 1.2rem;
+    min-height: 27px;
+  }
+
+  .stat-card small {
+    font-size: .68rem;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .diag-row,
+  .history-item {
+    min-height: 46px;
+    padding: 12px;
+    border-radius: 13px;
+    font-size: .84rem;
+  }
+
+  .history-list {
+    max-height: 260px;
+  }
+
+  .mini-btn {
+    padding: 7px 9px;
+    font-size: .75rem;
+  }
+
+  footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    padding: 20px 8px 4px;
+    font-size: .72rem;
+  }
+}
+
+@media (max-width:390px) {
+  .app-shell {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+
+  .topbar {
+    padding: 10px;
+  }
+
+  .brand-logo {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+  }
+
+  .brand h1 {
+    font-size: .92rem;
+  }
+
+  .live-pill {
+    max-width: 125px;
+    padding: 7px 8px;
+    font-size: .68rem;
+  }
+
+  .hero {
+    padding: 18px 14px;
+  }
+
+  .hero h2 {
+    font-size: 2rem;
+  }
+
+  .stats-panel {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stat-card {
+    padding: 12px;
+  }
 }
