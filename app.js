@@ -9,7 +9,7 @@ let history = [];
 const fields = [
   "lat","lng","accuracy","satellites","satHero","hdop","hdopHero","hdopText",
   "qualityBadge","altitude","altText","speed","speedText","age","chars","fixes",
-  "errors","gpsTime","gpsStatus","lastUpdateHero","satText"
+  "errors","gpsTime","gpsDate","wifiRSSI","gpsStatus","lastUpdateHero","satText"
 ];
 
 function $(id) {
@@ -142,6 +142,8 @@ function updateUI(raw) {
   const fixes = getNumber(raw, "fixes");
   const errors = getNumber(raw, "errors");
   const gpsTime = getValue(raw, "time", "gpsTime", "heure");
+  const gpsDate = getValue(raw, "date");
+  const wifiRSSI = getNumber(raw, "wifiRSSI");
   const valid = getValue(raw, "valid");
 
   setText("lat", lat !== null ? lat.toFixed(6) : "");
@@ -160,6 +162,8 @@ function updateUI(raw) {
   setText("fixes", fixes !== null ? String(fixes) : "");
   setText("errors", errors !== null ? String(errors) : "");
   setText("gpsTime", gpsTime !== null ? String(gpsTime) : "");
+  setText("gpsDate", gpsDate !== null ? String(gpsDate) : "");
+  setText("wifiRSSI", wifiRSSI !== null ? `${wifiRSSI} dBm` : "");
 
   if (valid === true || valid === "true") setText("gpsStatus", "Position valide");
   else if (valid === false || valid === "false") setText("gpsStatus", "Position invalide");
