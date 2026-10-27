@@ -10,6 +10,7 @@ if (!firebase.apps.length) {
 
 const auth = firebase.auth();
 const db = firebase.database();
+let registrationInProgress = false;
 
 const loginTab = document.getElementById("loginTab");
 const registerTab = document.getElementById("registerTab");
@@ -81,6 +82,7 @@ registerForm.addEventListener("submit", async (event) => {
 
   setMessage("registerMessage", "Création du compte…");
 
+  registrationInProgress = true;
   try {
     const credential = await auth.createUserWithEmailAndPassword(email, password);
     await credential.user.updateProfile({ displayName: name });
@@ -103,9 +105,11 @@ registerForm.addEventListener("submit", async (event) => {
     location.replace("./dashboard.html");
   } catch (error) {
     setMessage("registerMessage", friendlyError(error), "error");
+  } finally {
+    registrationInProgress = false;
   }
 });
 
 auth.onAuthStateChanged((user) => {
-  if (user) location.replace("./dashboard.html");
+  if (user && !registrationInProgress) location.replace("./dashboard.html");
 });
