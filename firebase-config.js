@@ -14,5 +14,5 @@ window.SAFETAG_FIREBASE_CONFIG = {
 };
 
 // Le Wemos écrit dans :
-// https://safetag-e5811-default-rtdb.asia-southeast1.firebasedatabase.app/safetag/position.json
-window.SAFETAG_GPS_PATH = "safetag/position";
+// https://safetag-e5811-default-rtdb.asia-southeast1.firebasedatabase.app/devices/ST-0001/position.json
+window.SAFETAG_GPS_PATH = "devices/ST-0001/position";
