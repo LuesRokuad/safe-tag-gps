@@ -53,8 +53,8 @@ function clearTelemetry({ keepMarker = false } = {}) {
   fields.forEach(id => setText(id, ""));
   document.querySelectorAll("#signalBars span").forEach(bar => bar.style.opacity = ".12");
 
-  if (!keepMarker && gpsMarker && map) {
-    map.removeLayer(gpsMarker);
+  if (!keepMarker && gpsMarker) {
+    gpsMarker.remove();
     gpsMarker = null;
     lastPosition = null;
   }
@@ -69,22 +69,16 @@ function clearTelemetry({ keepMarker = false } = {}) {
 }
 
 function initMap() {
-  map = L.map("map", {
-    zoomControl: false,
-    attributionControl: true,
-    preferCanvas: true
-  }).setView([0, 0], 2);
+  map = new maplibregl.Map({
+    container: "map",
+    style: "https://tiles.openfreemap.org/styles/liberty",
+    center: [0, 0],
+    zoom: 2,
+    attributionControl: true
+  });
 
-  L.control.zoom({ position: "bottomright" }).addTo(map);
-  L.control.scale({ position: "bottomleft", imperial: false }).addTo(map);
-
-  // Fond OpenStreetMap standard : lisible, détaillé et sans clé API.
-  // Il remplace l'ancien fond CARTO qui affichait "API KEY REQUIRED".
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    minZoom: 2,
-    attribution: "&copy; OpenStreetMap contributors"
-  }).addTo(map);
+  map.addControl(new maplibregl.NavigationControl(), "bottom-right");
+  map.addControl(new maplibregl.ScaleControl({ maxWidth: 120, unit: "metric" }), "bottom-left");
 }
 
 function getNumber(data, ...keys) {
@@ -200,13 +194,6 @@ function updateUI(raw) {
   if (lat !== null && lng !== null) {
     lastPosition = [lat, lng];
 
-    const markerIcon = L.divIcon({
-      className: "",
-      html: '<div class="safe-marker"></div>',
-      iconSize: [24, 24],
-      iconAnchor: [12, 12]
-    });
-
     const popupHtml =
       "<strong>" + (currentMeta?.name || currentDeviceId || "SafeTag") + "</strong><br>" +
       "Position GPS actuelle<br>" +
@@ -216,12 +203,18 @@ function updateUI(raw) {
       (hdop !== null ? "<br>HDOP : " + hdop.toFixed(2) : "");
 
     if (!gpsMarker) {
-      gpsMarker = L.marker(lastPosition, { icon: markerIcon }).addTo(map);
-      gpsMarker.bindPopup(popupHtml);
-      map.setView(lastPosition, 17);
+      const markerEl = document.createElement("div");
+      markerEl.className = "safe-marker";
+
+      gpsMarker = new maplibregl.Marker({ element: markerEl, anchor: "center" })
+        .setLngLat([lng, lat])
+        .setPopup(new maplibregl.Popup({ offset: 18 }).setHTML(popupHtml))
+        .addTo(map);
+
+      map.jumpTo({ center: [lng, lat], zoom: 17 });
     } else {
-      gpsMarker.setLatLng(lastPosition);
-      gpsMarker.setPopupContent(popupHtml);
+      gpsMarker.setLngLat([lng, lat]);
+      gpsMarker.getPopup().setHTML(popupHtml);
     }
 
     $("mapEmpty").classList.add("hidden");
@@ -336,6 +329,10 @@ async function selectDevice(deviceId) {
   $("manageAccessBtn").classList.toggle("hidden", !canManage);
   $("trackerContent").classList.remove("hidden");
   $("adminPanel").classList.add("hidden");
+
+  setTimeout(() => {
+    if (map) map.resize();
+  }, 100);
 
   positionRef = db.ref("devices/" + deviceId + "/position");
   positionRef.on("value", async (snapshot) => {
@@ -547,8 +544,8 @@ function openAdmin() {
 $("deviceSelect").addEventListener("change", event => selectDevice(event.target.value));
 $("focusBtn").addEventListener("click", () => {
   if (!lastPosition) return;
-  map.flyTo(lastPosition, Math.max(map.getZoom(), 17), { duration: .8 });
-  if (gpsMarker) gpsMarker.openPopup();
+  map.flyTo({ center: [lastPosition[1], lastPosition[0]], zoom: Math.max(map.getZoom(), 17), duration: 800 });
+  if (gpsMarker) gpsMarker.togglePopup();
 });
 $("clearHistoryBtn").addEventListener("click", () => { history = []; renderHistory(); });
 $("accountBtn").addEventListener("click", () => $("accountPanel").classList.toggle("hidden"));
