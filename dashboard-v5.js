@@ -53,8 +53,8 @@ function clearTelemetry({ keepMarker = false } = {}) {
   fields.forEach(id => setText(id, ""));
   document.querySelectorAll("#signalBars span").forEach(bar => bar.style.opacity = ".12");
 
-  if (!keepMarker && gpsMarker) {
-    gpsMarker.remove();
+  if (!keepMarker && gpsMarker && map) {
+    map.removeLayer(gpsMarker);
     gpsMarker = null;
     lastPosition = null;
   }
@@ -69,16 +69,18 @@ function clearTelemetry({ keepMarker = false } = {}) {
 }
 
 function initMap() {
-  map = new maplibregl.Map({
-    container: "map",
-    style: "https://tiles.openfreemap.org/styles/liberty",
-    center: [0, 0],
-    zoom: 2,
+  map = L.map("map", {
+    zoomControl: false,
     attributionControl: true
-  });
+  }).setView([0, 0], 2);
 
-  map.addControl(new maplibregl.NavigationControl(), "bottom-right");
-  map.addControl(new maplibregl.ScaleControl({ maxWidth: 120, unit: "metric" }), "bottom-left");
+  L.control.zoom({ position: "bottomright" }).addTo(map);
+  L.control.scale({ position: "bottomleft", imperial: false }).addTo(map);
+
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap contributors"
+  }).addTo(map);
 }
 
 function getNumber(data, ...keys) {
@@ -202,19 +204,20 @@ function updateUI(raw) {
       (satellites !== null ? "<br>Satellites : " + satellites : "") +
       (hdop !== null ? "<br>HDOP : " + hdop.toFixed(2) : "");
 
+    const markerIcon = L.divIcon({
+      className: "",
+      html: '<div class="safe-marker"></div>',
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
+    });
+
     if (!gpsMarker) {
-      const markerEl = document.createElement("div");
-      markerEl.className = "safe-marker";
-
-      gpsMarker = new maplibregl.Marker({ element: markerEl, anchor: "center" })
-        .setLngLat([lng, lat])
-        .setPopup(new maplibregl.Popup({ offset: 18 }).setHTML(popupHtml))
-        .addTo(map);
-
-      map.jumpTo({ center: [lng, lat], zoom: 17 });
+      gpsMarker = L.marker(lastPosition, { icon: markerIcon }).addTo(map);
+      gpsMarker.bindPopup(popupHtml);
+      map.setView(lastPosition, 17);
     } else {
-      gpsMarker.setLngLat([lng, lat]);
-      gpsMarker.getPopup().setHTML(popupHtml);
+      gpsMarker.setLatLng(lastPosition);
+      gpsMarker.setPopupContent(popupHtml);
     }
 
     $("mapEmpty").classList.add("hidden");
@@ -331,8 +334,8 @@ async function selectDevice(deviceId) {
   $("adminPanel").classList.add("hidden");
 
   setTimeout(() => {
-    if (map) map.resize();
-  }, 100);
+    if (map) map.invalidateSize(true);
+  }, 150);
 
   positionRef = db.ref("devices/" + deviceId + "/position");
   positionRef.on("value", async (snapshot) => {
@@ -544,8 +547,8 @@ function openAdmin() {
 $("deviceSelect").addEventListener("change", event => selectDevice(event.target.value));
 $("focusBtn").addEventListener("click", () => {
   if (!lastPosition) return;
-  map.flyTo({ center: [lastPosition[1], lastPosition[0]], zoom: Math.max(map.getZoom(), 17), duration: 800 });
-  if (gpsMarker) gpsMarker.togglePopup();
+  map.flyTo(lastPosition, Math.max(map.getZoom(), 17), { duration: .8 });
+  if (gpsMarker) gpsMarker.openPopup();
 });
 $("clearHistoryBtn").addEventListener("click", () => { history = []; renderHistory(); });
 $("accountBtn").addEventListener("click", () => $("accountPanel").classList.toggle("hidden"));
@@ -577,4 +580,8 @@ auth.onAuthStateChanged(async (user) => {
     console.error(error);
     setConnection("error", "Erreur de permissions Firebase");
   }
+});
+
+window.addEventListener("resize", () => {
+  if (map) map.invalidateSize(false);
 });
