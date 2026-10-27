@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" role="img" aria-labelledby="title">
+<title id="title">SafeTag</title>
+<g fill="currentColor">
+  <path d="M133 180c46-104 153-158 263-135 44 9 84 29 116 57l-56 39c-23-17-50-29-80-35-75-15-149 16-187 79l-56-5z"/>
+  <path d="M508 157L676 14 609 170l-101-13z"/>
+  <path d="M765 339c-45 104-152 159-262 137-45-9-85-29-118-57l56-40c24 18 51 30 81 36 75 15 149-16 187-80l56 4z"/>
+  <path d="M391 366L224 510l66-157 101 13z"/>
+</g>
+<text x="450" y="316" text-anchor="middle" fill="currentColor"
+  font-family="Arial, Helvetica, sans-serif" font-size="118" font-weight="600"
+  letter-spacing="-7">SafeTag</text>
+</svg>
