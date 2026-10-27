@@ -154,7 +154,7 @@ function updateUI(raw) {
   const valid = getValue(raw, "valid");
   const lastUpdate = getNumber(raw, "lastUpdate", "timestamp", "updatedAt");
 
-  if (lastUpdate !== null) lastUpdateFromDevice = lastUpdate;
+  lastUpdateFromDevice = lastUpdate;
 
   setText("lat", lat !== null ? lat.toFixed(6) : "");
   setText("lng", lng !== null ? lng.toFixed(6) : "");
@@ -285,6 +285,8 @@ async function loadDevices() {
 async function selectDevice(deviceId) {
   detachDeviceListeners();
   clearTelemetry();
+  history = [];
+  renderHistory();
   currentDeviceId = deviceId;
   localStorage.setItem("safetag.device", deviceId);
 
@@ -320,6 +322,8 @@ async function selectDevice(deviceId) {
   positionRef = db.ref("devices/" + deviceId + "/position");
   positionRef.on("value", async (snapshot) => {
     if (snapshot.exists()) {
+      if (legacyPositionRef) { legacyPositionRef.off(); legacyPositionRef = null; }
+      legacyFallbackUsed = false;
       updateUI(snapshot.val());
       return;
     }
@@ -339,6 +343,7 @@ async function selectDevice(deviceId) {
 async function claimPrototype() {
   setInlineMessage("claimMessage", "Vérification de ST-0001…");
   const metaRef = db.ref("devices/ST-0001/meta");
+  try {
   const metaSnap = await metaRef.once("value");
   const meta = metaSnap.val();
 
@@ -347,7 +352,6 @@ async function claimPrototype() {
     return;
   }
 
-  try {
     if (!meta?.ownerUid) {
       await metaRef.set({
         name: "SafeTag Prototype",
