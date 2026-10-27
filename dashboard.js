@@ -343,40 +343,56 @@ async function selectDevice(deviceId) {
 async function claimPrototype() {
   setInlineMessage("claimMessage", "Vérification de ST-0001…");
   const metaRef = db.ref("devices/ST-0001/meta");
+
   try {
-  const metaSnap = await metaRef.once("value");
-  const meta = metaSnap.val();
+    const metaSnap = await metaRef.once("value");
+    const meta = metaSnap.val();
 
-  if (meta?.ownerUid && meta.ownerUid !== currentUser.uid) {
-    setInlineMessage("claimMessage", "ST-0001 possède déjà un propriétaire. Demande-lui de t'ajouter.", "error");
-    return;
-  }
-
-    if (!meta?.ownerUid) {
-      await metaRef.set({
-        name: "SafeTag Prototype",
-        ownerUid: currentUser.uid,
-        createdAt: firebase.database.ServerValue.TIMESTAMP
-      });
+    if (meta?.ownerUid && meta.ownerUid !== currentUser.uid) {
+      setInlineMessage("claimMessage", "ST-0001 possède déjà un propriétaire. Demande-lui de t'ajouter.", "error");
+      return;
     }
 
-    await db.ref("devices/ST-0001/members/" + currentUser.uid).set({
-      role: "owner",
-      email: currentUser.email,
-      displayName: currentUser.displayName || currentUser.email,
-      addedAt: firebase.database.ServerValue.TIMESTAMP
-    });
+    if (!meta?.ownerUid) {
+      setInlineMessage("claimMessage", "1/3 — Création du propriétaire…");
+      try {
+        await metaRef.set({
+          name: "SafeTag Prototype",
+          ownerUid: currentUser.uid,
+          createdAt: firebase.database.ServerValue.TIMESTAMP
+        });
+      } catch (error) {
+        throw new Error("Étape 1 (propriétaire) refusée : " + (error.code || error.message));
+      }
+    }
 
-    await db.ref("userDevices/" + currentUser.uid + "/ST-0001").set({
-      name: "SafeTag Prototype",
-      role: "owner"
-    });
+    setInlineMessage("claimMessage", "2/3 — Création de ton accès propriétaire…");
+    try {
+      await db.ref("devices/ST-0001/members/" + currentUser.uid).set({
+        role: "owner",
+        email: currentUser.email,
+        displayName: currentUser.displayName || currentUser.email,
+        addedAt: firebase.database.ServerValue.TIMESTAMP
+      });
+    } catch (error) {
+      throw new Error("Étape 2 (membre owner) refusée : " + (error.code || error.message));
+    }
 
-    setInlineMessage("claimMessage", "Appareil associé.", "success");
+    setInlineMessage("claimMessage", "3/3 — Ajout de l'appareil à ton compte…");
+    try {
+      await db.ref("userDevices/" + currentUser.uid + "/ST-0001").set({
+        name: "SafeTag Prototype",
+        role: "owner"
+      });
+    } catch (error) {
+      throw new Error("Étape 3 (userDevices) refusée : " + (error.code || error.message));
+    }
+
+    setInlineMessage("claimMessage", "Appareil associé avec succès.", "success");
     await loadDevices();
   } catch (error) {
-    console.error(error);
-    setInlineMessage("claimMessage", "Impossible d'associer l'appareil. Vérifie les règles Firebase.", "error");
+    console.error("Association ST-0001:", error);
+    setInlineMessage("claimMessage", error.message || "Association impossible.", "error");
   }
 }
 
