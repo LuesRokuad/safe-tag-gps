@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080b12">
+  <title>SafeTag — Tableau de bord</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./dashboard.css">
+</head>
+<body>
+  <div class="background-grid"></div>
+
+  <main class="app-shell">
+    <header class="topbar glass">
+      <div class="brand">
+        <div class="brand-logo">ST</div>
+        <div>
+          <p class="eyebrow">SAFE TAG</p>
+          <h1>GPS Live Tracker</h1>
+        </div>
+      </div>
+
+      <div class="topbar-actions account-actions">
+        <select id="deviceSelect" class="device-select" aria-label="Choisir un appareil"></select>
+        <div class="live-pill" id="connectionPill">
+          <span class="status-dot waiting" id="statusDot"></span>
+          <span id="connectionText">Chargement…</span>
+        </div>
+        <button class="mini-btn" id="accountBtn" type="button">Compte</button>
+      </div>
+    </header>
+
+    <section class="account-panel glass hidden" id="accountPanel">
+      <div>
+        <span class="section-kicker">SESSION</span>
+        <h3 id="accountName">Utilisateur</h3>
+        <p id="accountEmail"></p>
+      </div>
+      <div class="account-panel-actions">
+        <button class="mini-btn" id="claimBtn" type="button">Associer le prototype ST-0001</button>
+        <button class="mini-btn danger" id="logoutBtn" type="button">Se déconnecter</button>
+      </div>
+    </section>
+
+    <section class="no-device glass hidden" id="noDevicePanel">
+      <span class="section-kicker">AUCUN APPAREIL</span>
+      <h2>Ton compte n’a encore accès à aucun SafeTag.</h2>
+      <p>
+        Si ST-0001 n’a pas encore de propriétaire, tu peux l’associer. Sinon,
+        demande à un administrateur de l’appareil de t’ajouter avec ton e-mail.
+      </p>
+      <button class="btn btn-primary" id="claimBtnMain" type="button">Associer ST-0001</button>
+      <p class="inline-message" id="claimMessage"></p>
+    </section>
+
+    <div id="trackerContent" class="hidden">
+      <section class="hero glass">
+        <div class="hero-copy">
+          <span class="section-kicker">POSITION EN DIRECT</span>
+          <h2><span id="deviceNameHero">SafeTag</span> en temps réel.</h2>
+          <p id="deviceRoleText">Chargement des permissions…</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" id="focusBtn" disabled>📍 Recentrer sur le GPS</button>
+            <button class="btn secondary hidden" id="manageAccessBtn" type="button">👥 Gérer les accès</button>
+          </div>
+        </div>
+
+        <div class="signal-card">
+          <div class="signal-header">
+            <span>Qualité du signal</span>
+            <span class="badge" id="qualityBadge"></span>
+          </div>
+          <div class="signal-bars" id="signalBars">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="signal-meta">
+            <div><small>Satellites</small><strong id="satHero"></strong></div>
+            <div><small>HDOP</small><strong id="hdopHero"></strong></div>
+            <div><small>Dernière maj</small><strong id="lastUpdateHero"></strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="map-panel glass">
+          <div class="panel-header">
+            <div><span class="section-kicker">CARTE GPS LIVE</span><h3>Position actuelle</h3></div>
+            <div class="map-status">
+              <span class="status-dot waiting" id="mapStatusDot"></span>
+              <span id="mapStatusText">En attente</span>
+            </div>
+          </div>
+
+          <div class="map-wrap">
+            <div id="map"></div>
+            <div class="map-empty" id="mapEmpty">
+              <strong>Aucune position reçue</strong>
+              <span>La dernière position valide restera affichée même si le traceur passe hors ligne.</span>
+            </div>
+          </div>
+
+          <div class="map-footer">
+            <div><small>Latitude</small><strong id="lat"></strong></div>
+            <div><small>Longitude</small><strong id="lng"></strong></div>
+            <div><small>Précision</small><strong id="accuracy"></strong></div>
+          </div>
+        </article>
+
+        <aside class="stats-panel">
+          <article class="stat-card glass accent-blue"><div class="stat-icon">🛰️</div><div><span>Satellites</span><strong id="satellites"></strong><small id="satText"></small></div></article>
+          <article class="stat-card glass accent-orange"><div class="stat-icon">📡</div><div><span>HDOP</span><strong id="hdop"></strong><small id="hdopText"></small></div></article>
+          <article class="stat-card glass accent-green"><div class="stat-icon">⛰️</div><div><span>Altitude</span><strong id="altitude"></strong><small id="altText"></small></div></article>
+          <article class="stat-card glass accent-purple"><div class="stat-icon">⚡</div><div><span>Vitesse</span><strong id="speed"></strong><small id="speedText"></small></div></article>
+        </aside>
+      </section>
+
+      <section class="details-grid">
+        <article class="glass detail-card">
+          <div class="panel-header"><div><span class="section-kicker">ÉTAT DU TRACEUR</span><h3>Diagnostic</h3></div></div>
+          <div class="diagnostic-list">
+            <div class="diag-row"><span>GPS</span><strong id="gpsStatus"></strong></div>
+            <div class="diag-row"><span>Âge de la position</span><strong id="age"></strong></div>
+            <div class="diag-row"><span>Caractères reçus</span><strong id="chars"></strong></div>
+            <div class="diag-row"><span>Trames valides</span><strong id="fixes"></strong></div>
+            <div class="diag-row"><span>Erreurs checksum</span><strong id="errors"></strong></div>
+            <div class="diag-row"><span>Heure GPS</span><strong id="gpsTime"></strong></div>
+            <div class="diag-row"><span>Date GPS</span><strong id="gpsDate"></strong></div>
+            <div class="diag-row"><span>Signal Wi-Fi Wemos</span><strong id="wifiRSSI"></strong></div>
+          </div>
+        </article>
+
+        <article class="glass detail-card">
+          <div class="panel-header"><div><span class="section-kicker">HISTORIQUE LOCAL</span><h3>Dernières positions vues</h3></div><button class="mini-btn" id="clearHistoryBtn">Effacer</button></div>
+          <div class="history-list" id="historyList"></div>
+        </article>
+      </section>
+    </div>
+
+    <section class="admin-panel glass hidden" id="adminPanel">
+      <div class="panel-header">
+        <div><span class="section-kicker">ADMINISTRATION</span><h3>Accès à l’appareil</h3></div>
+        <button class="mini-btn" id="closeAdminBtn" type="button">Fermer</button>
+      </div>
+
+      <div class="admin-grid">
+        <div class="admin-card">
+          <h4>Nom de l’appareil</h4>
+          <div class="inline-form">
+            <input id="deviceNameInput" type="text" maxlength="40" placeholder="SafeTag de Lues">
+            <button class="mini-btn" id="renameDeviceBtn" type="button">Renommer</button>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h4>Ajouter un utilisateur</h4>
+          <p>Le compte doit déjà avoir été créé sur SafeTag.</p>
+          <div class="inline-form">
+            <input id="inviteEmail" type="email" placeholder="utilisateur@exemple.com">
+            <select id="inviteRole"><option value="viewer">Membre</option><option value="admin">Admin</option></select>
+            <button class="mini-btn" id="inviteBtn" type="button">Ajouter</button>
+          </div>
+          <p class="inline-message" id="adminMessage"></p>
+        </div>
+      </div>
+
+      <div class="members-list" id="membersList"></div>
+    </section>
+
+    <footer>
+      <span>SafeTag © 2026</span>
+      <span>Firebase Auth • Realtime Database • Wemos D1 mini</span>
+    </footer>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+  <script src="./firebase-config.js"></script>
+  <script src="./dashboard.js"></script>
+</body>
+</html>
