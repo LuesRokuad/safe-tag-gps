@@ -518,3 +518,32 @@ footer {
     padding: 12px;
   }
 }
+
+
+/* SafeTag brand logo */
+.brand-logo-custom {
+  width: 126px !important;
+  min-width: 126px;
+  height: 58px !important;
+  padding: 8px 10px !important;
+  background: rgba(255,255,255,.96) !important;
+  border-radius: 14px !important;
+  overflow: hidden;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+.brand-logo-custom img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  color: #080b12;
+}
+@media (max-width: 620px) {
+  .brand-logo-custom {
+    width: 94px !important;
+    min-width: 94px;
+    height: 48px !important;
+  }
+}
