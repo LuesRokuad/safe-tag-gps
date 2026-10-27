@@ -69,12 +69,21 @@ function clearTelemetry({ keepMarker = false } = {}) {
 }
 
 function initMap() {
-  map = L.map("map", { zoomControl: false, attributionControl: true }).setView([0, 0], 2);
+  map = L.map("map", {
+    zoomControl: false,
+    attributionControl: true,
+    preferCanvas: true
+  }).setView([0, 0], 2);
+
   L.control.zoom({ position: "bottomright" }).addTo(map);
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    maxZoom: 20,
-    subdomains: "abcd",
-    attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
+  L.control.scale({ position: "bottomleft", imperial: false }).addTo(map);
+
+  // Fond OpenStreetMap standard : lisible, détaillé et sans clé API.
+  // Il remplace l'ancien fond CARTO qui affichait "API KEY REQUIRED".
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    minZoom: 2,
+    attribution: "&copy; OpenStreetMap contributors"
   }).addTo(map);
 }
 
@@ -198,12 +207,21 @@ function updateUI(raw) {
       iconAnchor: [12, 12]
     });
 
+    const popupHtml =
+      "<strong>" + (currentMeta?.name || currentDeviceId || "SafeTag") + "</strong><br>" +
+      "Position GPS actuelle<br>" +
+      "Latitude : " + lat.toFixed(6) + "<br>" +
+      "Longitude : " + lng.toFixed(6) +
+      (satellites !== null ? "<br>Satellites : " + satellites : "") +
+      (hdop !== null ? "<br>HDOP : " + hdop.toFixed(2) : "");
+
     if (!gpsMarker) {
       gpsMarker = L.marker(lastPosition, { icon: markerIcon }).addTo(map);
-      gpsMarker.bindPopup("<strong>SafeTag</strong><br>Position reçue depuis Firebase");
-      map.setView(lastPosition, 16);
+      gpsMarker.bindPopup(popupHtml);
+      map.setView(lastPosition, 17);
     } else {
       gpsMarker.setLatLng(lastPosition);
+      gpsMarker.setPopupContent(popupHtml);
     }
 
     $("mapEmpty").classList.add("hidden");
@@ -529,7 +547,7 @@ function openAdmin() {
 $("deviceSelect").addEventListener("change", event => selectDevice(event.target.value));
 $("focusBtn").addEventListener("click", () => {
   if (!lastPosition) return;
-  map.flyTo(lastPosition, Math.max(map.getZoom(), 16), { duration: .8 });
+  map.flyTo(lastPosition, Math.max(map.getZoom(), 17), { duration: .8 });
   if (gpsMarker) gpsMarker.openPopup();
 });
 $("clearHistoryBtn").addEventListener("click", () => { history = []; renderHistory(); });
