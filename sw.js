@@ -1,6 +1,6 @@
-const CACHE_NAME = "safe-tag-v4";
+const CACHE_NAME = "safe-tag-v6";
 
-const FILES_TO_CACHE = [
+const FILES_TO_CACHE = [\n  "./safetag-logo.svg",\n  "./safetag-favicon.svg",
   "./",
   "./index.html",
   "./dashboard.html",
