@@ -1,0 +1,57 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "profiles": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+
+    "directory": {
+      "$emailKey": {
+        ".read": "auth != null",
+        ".write": "auth != null && newData.child('uid').val() === auth.uid"
+      }
+    },
+
+    "userDevices": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        "$deviceId": {
+          ".write": "auth != null && (auth.uid === $uid || root.child('devices').child($deviceId).child('meta').child('ownerUid').val() === auth.uid || root.child('devices').child($deviceId).child('members').child(auth.uid).child('role').val() === 'admin')"
+        }
+      }
+    },
+
+    "devices": {
+      "$deviceId": {
+        "meta": {
+          ".read": "auth != null && (data.child('ownerUid').val() === auth.uid || root.child('devices').child($deviceId).child('members').child(auth.uid).exists())",
+          ".write": "auth != null && ((data.child('ownerUid').val() === auth.uid) || root.child('devices').child($deviceId).child('members').child(auth.uid).child('role').val() === 'admin' || (!data.child('ownerUid').exists() && newData.child('ownerUid').val() === auth.uid))"
+        },
+
+        "members": {
+          "$memberUid": {
+            ".read": "auth != null && (auth.uid === $memberUid || root.child('devices').child($deviceId).child('meta').child('ownerUid').val() === auth.uid || root.child('devices').child($deviceId).child('members').child(auth.uid).child('role').val() === 'admin')",
+            ".write": "auth != null && (root.child('devices').child($deviceId).child('meta').child('ownerUid').val() === auth.uid || root.child('devices').child($deviceId).child('members').child(auth.uid).child('role').val() === 'admin')"
+          }
+        },
+
+        "position": {
+          ".read": "auth != null && (root.child('devices').child($deviceId).child('meta').child('ownerUid').val() === auth.uid || root.child('devices').child($deviceId).child('members').child(auth.uid).exists())",
+          ".write": true
+        }
+      }
+    },
+
+    "safetag": {
+      "position": {
+        ".read": "auth != null",
+        ".write": true
+      }
+    }
+  }
+}

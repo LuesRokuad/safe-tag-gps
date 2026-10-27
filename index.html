@@ -4,17 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#080b12">
-  <title>SafeTag — GPS Live</title>
-
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <title>SafeTag — Connexion</title>
   <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./auth.css">
 </head>
-<body>
+<body class="auth-body">
   <div class="background-grid"></div>
 
-  <main class="app-shell">
-    <header class="topbar glass">
-      <div class="brand">
+  <main class="auth-shell">
+    <section class="auth-visual glass">
+      <div class="brand auth-brand">
         <div class="brand-logo">ST</div>
         <div>
           <p class="eyebrow">SAFE TAG</p>
@@ -22,181 +21,86 @@
         </div>
       </div>
 
-      <div class="topbar-actions">
-        <div class="live-pill" id="connectionPill">
-          <span class="status-dot waiting" id="statusDot"></span>
-          <span id="connectionText">En attente de Firebase</span>
-        </div>
-        <div class="clock" id="clock"></div>
-      </div>
-    </header>
-
-    <section class="hero glass">
-      <div class="hero-copy">
-        <span class="section-kicker">POSITION EN DIRECT</span>
-        <h2>Localise ton SafeTag <span>en temps réel.</span></h2>
+      <div class="auth-hero-copy">
+        <span class="section-kicker">ESPACE SÉCURISÉ</span>
+        <h2>Retrouve uniquement les SafeTag auxquels tu as accès.</h2>
         <p>
-          Les informations affichées ici proviennent uniquement de Firebase.
-          Aucune donnée GPS n’est simulée.
+          Chaque compte peut accéder à un ou plusieurs appareils. Le propriétaire
+          ou un administrateur peut partager l'accès avec d'autres utilisateurs.
         </p>
-
-        <div class="hero-actions">
-          <button class="btn btn-primary" id="focusBtn" disabled>
-            📍 Recentrer sur le GPS
-          </button>
-        </div>
       </div>
 
-      <div class="signal-card">
-        <div class="signal-header">
-          <span>Qualité du signal</span>
-          <span class="badge" id="qualityBadge"></span>
-        </div>
-
-        <div class="signal-bars" id="signalBars">
-          <span></span><span></span><span></span><span></span><span></span>
-        </div>
-
-        <div class="signal-meta">
-          <div>
-            <small>Satellites</small>
-            <strong id="satHero"></strong>
-          </div>
-          <div>
-            <small>HDOP</small>
-            <strong id="hdopHero"></strong>
-          </div>
-          <div>
-            <small>Dernière maj</small>
-            <strong id="lastUpdateHero"></strong>
-          </div>
-        </div>
+      <div class="auth-features">
+        <div><strong>🔐</strong><span>Connexion Firebase sécurisée</span></div>
+        <div><strong>👥</strong><span>Plusieurs utilisateurs par appareil</span></div>
+        <div><strong>🛡️</strong><span>Rôles propriétaire, admin et membre</span></div>
       </div>
     </section>
 
-    <section class="dashboard-grid">
-      <article class="map-panel glass">
-        <div class="panel-header">
-          <div>
-            <span class="section-kicker">CARTE GPS LIVE</span>
-            <h3>Position actuelle</h3>
-          </div>
-          <div class="map-status">
-            <span class="status-dot waiting" id="mapStatusDot"></span>
-            <span id="mapStatusText">En attente</span>
-          </div>
+    <section class="auth-card glass">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="loginTab" type="button">Connexion</button>
+        <button class="auth-tab" id="registerTab" type="button">Créer un compte</button>
+      </div>
+
+      <form id="loginForm" class="auth-form">
+        <div>
+          <span class="section-kicker">BON RETOUR</span>
+          <h2>Connecte-toi</h2>
+          <p>Accède à tes appareils SafeTag et à leurs dernières positions.</p>
         </div>
 
-        <div class="map-wrap">
-          <div id="map"></div>
-          <div class="map-empty" id="mapEmpty">
-            <strong>Aucune position reçue</strong>
-            <span>Le point rouge apparaîtra dès que Firebase fournira une latitude et une longitude.</span>
-          </div>
+        <label>
+          Adresse e-mail
+          <input id="loginEmail" type="email" autocomplete="email" required placeholder="nom@exemple.com">
+        </label>
+
+        <label>
+          Mot de passe
+          <input id="loginPassword" type="password" autocomplete="current-password" required minlength="6" placeholder="••••••••">
+        </label>
+
+        <button class="btn btn-primary auth-submit" type="submit">Se connecter</button>
+        <p class="auth-message" id="loginMessage"></p>
+      </form>
+
+      <form id="registerForm" class="auth-form hidden">
+        <div>
+          <span class="section-kicker">NOUVEAU COMPTE</span>
+          <h2>Créer ton compte</h2>
+          <p>Tu pourras ensuite recevoir l'accès à un SafeTag ou associer le prototype.</p>
         </div>
 
-        <div class="map-footer">
-          <div>
-            <small>Latitude</small>
-            <strong id="lat"></strong>
-          </div>
-          <div>
-            <small>Longitude</small>
-            <strong id="lng"></strong>
-          </div>
-          <div>
-            <small>Précision</small>
-            <strong id="accuracy"></strong>
-          </div>
-        </div>
-      </article>
+        <label>
+          Nom affiché
+          <input id="registerName" type="text" autocomplete="name" required maxlength="50" placeholder="Ton nom">
+        </label>
 
-      <aside class="stats-panel">
-        <article class="stat-card glass accent-blue">
-          <div class="stat-icon">🛰️</div>
-          <div>
-            <span>Satellites</span>
-            <strong id="satellites"></strong>
-            <small id="satText"></small>
-          </div>
-        </article>
+        <label>
+          Adresse e-mail
+          <input id="registerEmail" type="email" autocomplete="email" required placeholder="nom@exemple.com">
+        </label>
 
-        <article class="stat-card glass accent-orange">
-          <div class="stat-icon">📡</div>
-          <div>
-            <span>HDOP</span>
-            <strong id="hdop"></strong>
-            <small id="hdopText"></small>
-          </div>
-        </article>
+        <label>
+          Mot de passe
+          <input id="registerPassword" type="password" autocomplete="new-password" required minlength="6" placeholder="6 caractères minimum">
+        </label>
 
-        <article class="stat-card glass accent-green">
-          <div class="stat-icon">⛰️</div>
-          <div>
-            <span>Altitude</span>
-            <strong id="altitude"></strong>
-            <small id="altText"></small>
-          </div>
-        </article>
+        <label>
+          Confirmer le mot de passe
+          <input id="registerPasswordConfirm" type="password" autocomplete="new-password" required minlength="6" placeholder="Répète le mot de passe">
+        </label>
 
-        <article class="stat-card glass accent-purple">
-          <div class="stat-icon">⚡</div>
-          <div>
-            <span>Vitesse</span>
-            <strong id="speed"></strong>
-            <small id="speedText"></small>
-          </div>
-        </article>
-      </aside>
+        <button class="btn btn-primary auth-submit" type="submit">Créer mon compte</button>
+        <p class="auth-message" id="registerMessage"></p>
+      </form>
     </section>
-
-    <section class="details-grid">
-      <article class="glass detail-card">
-        <div class="panel-header">
-          <div>
-            <span class="section-kicker">ÉTAT DU TRACEUR</span>
-            <h3>Diagnostic</h3>
-          </div>
-        </div>
-
-        <div class="diagnostic-list">
-          <div class="diag-row"><span>GPS</span><strong id="gpsStatus"></strong></div>
-          <div class="diag-row"><span>Âge de la position</span><strong id="age"></strong></div>
-          <div class="diag-row"><span>Caractères reçus</span><strong id="chars"></strong></div>
-          <div class="diag-row"><span>Trames valides</span><strong id="fixes"></strong></div>
-          <div class="diag-row"><span>Erreurs checksum</span><strong id="errors"></strong></div>
-          <div class="diag-row"><span>Heure GPS</span><strong id="gpsTime"></strong></div>
-          <div class="diag-row"><span>Date GPS</span><strong id="gpsDate"></strong></div>
-          <div class="diag-row"><span>Signal Wi‑Fi Wemos</span><strong id="wifiRSSI"></strong></div>
-        </div>
-      </article>
-
-      <article class="glass detail-card">
-        <div class="panel-header">
-          <div>
-            <span class="section-kicker">HISTORIQUE</span>
-            <h3>Dernières positions reçues</h3>
-          </div>
-          <button class="mini-btn" id="clearHistoryBtn">Effacer</button>
-        </div>
-
-        <div class="history-list" id="historyList"></div>
-      </article>
-    </section>
-
-    <footer>
-      <span>SafeTag © 2026</span>
-      <span>Wemos D1 mini • GPS • Firebase Realtime Database</span>
-    </footer>
   </main>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
-
-  <script src="firebase-config.js"></script>
-  <script src="app.js"></script>
+  <script src="./firebase-config.js"></script>
+  <script src="./auth.js"></script>
 </body>
 </html>
