@@ -1,4 +1,4 @@
-const CACHE_NAME = "safe-tag-v3";
+const CACHE_NAME = "safe-tag-v4";
 
 const FILES_TO_CACHE = [
   "./",
@@ -43,7 +43,19 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  if (event.request.method !== "GET" || requestUrl.origin !== self.location.origin) return;
+
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => cachedResponse || fetch(event.request))
+    fetch(event.request).then(response => {
+      if (response.ok) {
+        const copy = response.clone();
+        event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)));
+      }
+      return response;
+    }).catch(async () => {
+      const cached = await caches.match(event.request);
+      if (cached) return cached;
+      return Response.error();
+    })
   );
 });
