@@ -1,4 +1,4 @@
-const CACHE_NAME = "safe-tag-v7";
+const CACHE_NAME = "safe-tag-v8";
 
 const FILES_TO_CACHE = [
   "./safetag-logo.svg",
