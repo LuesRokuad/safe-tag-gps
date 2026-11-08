@@ -1,9 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<rect width="512" height="512" rx="110" fill="#ff9f1a"/>
-<g fill="#080b12">
-  <path d="M91 204c30-72 105-113 182-99 31 6 59 19 83 39l-47 35c-15-10-31-17-50-20-48-9-94 12-117 51l-51-6z"/>
-  <path d="M318 166L429 55l-47 123-64-12z"/>
-  <path d="M421 309c-30 72-105 113-182 99-31-6-60-19-83-40l47-34c15 10 31 17 50 20 48 9 94-12 117-51l51 6z"/>
-  <path d="M194 346L83 457l47-123 64 12z"/>
-</g>
+  <rect x="12" y="12" width="488" height="488" rx="96" fill="#ffffff"/>
+  <g fill="#050505">
+    <path d="M92 190c29-66 98-105 170-92 29 5 56 18 78 36l-43 31c-14-9-30-16-47-19-45-8-89 11-111 48l-47-4z"/>
+    <path d="M304 154L411 50l-45 116-62-12z"/>
+    <path d="M420 298c-29 66-98 105-170 92-29-5-56-18-78-36l43-31c14 9 30 16 47 19 45 8 89-11 111-48l47 4z"/>
+    <path d="M208 334L101 438l45-116 62 12z"/>
+  </g>
+  <text x="256" y="287" text-anchor="middle" fill="#050505"
+    font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="700"
+    letter-spacing="-5">SafeTag</text>
 </svg>
